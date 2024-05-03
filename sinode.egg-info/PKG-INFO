@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: sinode
+Version: 0.0.1
+Summary: Universal approximation with physics constraints
+Author-email: Roussel Desmond Nzoyem <desmond.ngueguin@gmail.com>
+Requires-Dist: jax>=0.3.4
+Provides-Extra: dev
+Requires-Dist: seaborn; extra == "dev"
+Requires-Dist: pyvista[trame]; extra == "dev"

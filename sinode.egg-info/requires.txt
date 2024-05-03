@@ -1,0 +1,5 @@
+jax>=0.3.4
+
+[dev]
+seaborn
+pyvista[trame]
