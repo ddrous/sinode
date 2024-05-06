@@ -8,6 +8,7 @@ sns.set_theme(context="notebook", style="ticks",
         font='sans-serif', font_scale=1, color_codes=True, rc={"lines.linewidth": 2})
 plt.style.use("dark_background")
 
+import equinox as eqx
 
 def seconds_to_hours(seconds):
     seconds = int(seconds)
@@ -76,3 +77,50 @@ def RK4(fun, t_span, y0, *args, t_eval=None, subdivisions=1, **kwargs):
 
     _, ys = jax.lax.scan(step, (t_solve[0], y0), t_solve[:])
     return ys[eval_indices, :]
+
+
+
+
+
+
+
+
+
+
+
+
+
+def flatten_pytree(pytree):
+    """ Flatten the leaves of a pytree into a single array. Return the array, the shapes of the leaves and the tree_def. """
+
+    leaves, tree_def = jax.tree_util.tree_flatten(pytree)
+    flat = jnp.concatenate([x.flatten() for x in leaves])
+    shapes = [x.shape for x in leaves]
+    return flat, shapes, tree_def
+
+def unflatten_pytree(flat, shapes, tree_def):
+    """ Reconstructs a pytree given its leaves flattened, their shapes, and the treedef. """
+
+    leaves_prod = [0]+[np.prod(x) for x in shapes]
+
+    lpcum = np.cumsum(leaves_prod)
+    leaves = [flat[lpcum[i-1]:lpcum[i]].reshape(shapes[i-1]) for i in range(1, len(lpcum))]
+
+    return jax.tree_util.tree_unflatten(tree_def, leaves)
+
+
+@eqx.filter_jit
+def params_norm_squared(params):
+    """ normalised squared norm of the parameter """
+    params = eqx.filter(params, eqx.is_array, replace=jnp.zeros(1))
+    diff_flat, _, _ = flatten_pytree(params)
+    return (diff_flat.T@diff_flat) / diff_flat.shape[0]
+
+
+@eqx.filter_jit
+def params_diff_norm_squared(params1, params2):
+    """ normalised squared norm of the parameters difference """
+    params1 = eqx.filter(params1, eqx.is_array, replace=jnp.zeros(1))
+    params2 = eqx.filter(params2, eqx.is_array, replace=jnp.zeros(1))
+    diff_flat, _, _ = flatten_pytree(jax.tree_util.tree_map(lambda x, y: x-y, params1, params2))
+    return (diff_flat.T@diff_flat) / diff_flat.shape[0]

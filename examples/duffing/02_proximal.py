@@ -58,10 +58,19 @@ epsilon = 0e1  ## For contrastive loss
 eta_inv, eta_cont, eta_spar = 1e-3, 1e-2, 1e-1
 
 ## Training hps
-print_every = 1000
-nb_epochs = 15000
+print_every = 1
+nb_epochs = 2
 inner_steps_node = 1
 inner_steps_coeffs = 1
+
+## Proximal trianing hps
+nb_outer_steps_max=nb_epochs
+inner_tol_node=1e-8 
+inner_tol_coeffs=1e-8
+nb_inner_steps_max=max(inner_steps_coeffs, inner_steps_node)
+proximal_reg=100.
+patience=nb_epochs
+
 
 ## Data generation hps
 T_horizon = 5
@@ -405,14 +414,7 @@ def renormalize_model(model, nb_iters, key):
     return jax.tree.map(appply_func, model)
 
 
-# # #%%
-# mat1 = model.vector_field.basis_funcs.layers[0].weight[0]
-# mat2 = renormalize_model(model, power_iter_steps, main_key).vector_field.basis_funcs.layers[0].weight[0]
 
-# print("Mat 1 and 2:", mat1, mat2)
-
-# print("spectral norms of 1 and 2 (with numpy)", np.linalg.svd(mat1, compute_uv=False)[0], np.linalg.svd(mat2, compute_uv=False)[0])
-# print("spectral norms of 1 and 2 (with jax)", power_iteration(mat1, 10, main_key), power_iteration(mat2, 10, main_key))
 
 #%%
 
@@ -428,10 +430,6 @@ sched_coeffs = optax.piecewise_constant_schedule(init_value=init_lr, boundaries_
 nb_data_points = data.shape[1]
 batch_size = nb_data_points
 
-start_time = time.time()
-
-
-print(f"\n\n=== Beginning Training ... ===")
 
 opt_node = optax.adam(sched_node)
 opt_state_node = opt_node.init(eqx.filter(model, eqx.is_array))
@@ -440,56 +438,244 @@ opt_coeffs = optax.adam(sched_coeffs)
 opt_state_coeffs = opt_coeffs.init(eqx.filter(coeffs, eqx.is_array))
 
 
-train_key, _ = jax.random.split(main_key)
+
+
+# start_time = time.time()
+
+# print(f"\n\n=== Beginning Training ... ===")
+
+# train_key, _ = jax.random.split(main_key)
+
+# losses_node = []
+# losses_coeffs = []
+
+# for epoch in range(nb_epochs):
+
+#     nb_batches = 0
+#     loss_sum_node = 0.
+#     loss_sum_coeffs = 0.
+
+#     for i in range(0, nb_data_points, batch_size):
+#         batch = (data[0,i:i+batch_size,...], t_eval)
+    
+#         for _ in range(inner_steps_node):
+#             train_key, _ = jax.random.split(train_key)
+#             model, coeffs, opt_state_node, loss = train_step_node(model, coeffs, batch, opt_state_node, train_key)
+
+#         loss_sum_node += loss
+
+#         for _ in range(inner_steps_coeffs):
+#             train_key, _ = jax.random.split(train_key)
+#             model, coeffs, opt_state_coeffs, loss = train_step_coeffs(model, coeffs, batch, opt_state_coeffs, train_key)
+#         loss_sum_coeffs += loss
+
+#         nb_batches += 1
+
+
+#     # if epoch%renormalize_every==0:      ## TODO Check this
+#     #     ## Renormalise the matrices to ensure they are invertible
+#     #     train_key, _ = jax.random.split(train_key)
+#     #     model = renormalize_model(model, power_iter_steps, train_key)
+
+#     if epoch%threshold_every==0:
+#         ## Threshold the coefficients
+#         coeffs = threshold_coeffs(coeffs, threshold_val)
+
+
+#     loss_epoch_node = loss_sum_node/nb_batches
+#     losses_node.append(loss_epoch_node)
+
+#     loss_epoch_coeffs = loss_sum_coeffs/nb_batches
+#     losses_coeffs.append(loss_epoch_coeffs)
+
+#     if epoch%print_every==0 or epoch<=3 or epoch==nb_epochs-1:
+#         print(f"    Epoch: {epoch:-5d}      LossNode: {loss_epoch_node:.8f}      LossCoeffs: {loss_epoch_coeffs:.8f}", flush=True)
+
+# wall_time = time.time() - start_time
+# time_in_hmsecs = seconds_to_hours(wall_time)
+# print("\nTotal GD training time: %d hours %d mins %d secs" %time_in_hmsecs)
+
+
+#%%
+
+
+
+
+
+
+""" Train the model using the proximal gradient descent algorithm. Algorithm 2 in https://proceedings.mlr.press/v97/li19n.html"""
+
+
+def loss_fn_aux(model, coeffs, batch, key):
+
+    rec_loss = loss_rec(model, coeffs, batch, key)
+    inv_loss = loss_inv(model, coeffs, batch, key)
+    cont_loss = loss_cont(model, coeffs, batch, key)
+    spar_loss = loss_sparsity(model, coeffs, batch, key)
+
+    loss_val = rec_loss + eta_inv*inv_loss + eta_cont*cont_loss + eta_spar*spar_loss
+
+    return loss_val, (rec_loss, inv_loss, cont_loss, spar_loss)
+
+
+@eqx.filter_jit
+def train_step_node(node, node_old, coeffs, batch, opt_state, key):
+    print('\nCompiling function "train_step" for neural ode ...')
+
+    def prox_loss_fn(node, coeffs, batch, key):
+        loss, aux_data = loss_fn_aux(node, coeffs, batch, key)
+        diff_norm = params_diff_norm_squared(node, node_old)
+        return loss + proximal_reg * diff_norm / 2., (*aux_data, diff_norm)
+
+    (loss, aux_data), grads = eqx.filter_value_and_grad(prox_loss_fn, has_aux=True)(node, coeffs, batch, key)
+
+    updates, opt_state = opt_node.update(grads, opt_state)
+    node = eqx.apply_updates(node, updates)
+
+    return node, coeffs, opt_state, loss, aux_data
+
+
+@eqx.filter_jit
+def train_step_coeffs(node, coeffs, coeffs_old, batch, opt_state, key):
+    print('\nCompiling function "train_step" for coeffs ...')
+
+    def prox_loss_fn(coeffs, node, batch, key):
+        loss, aux_data = loss_fn_aux(node, coeffs, batch, key)
+        diff_norm = params_diff_norm_squared(coeffs, coeffs_old)
+        return loss + proximal_reg * diff_norm / 2., (*aux_data, diff_norm)
+
+    (loss, aux_data), grads = eqx.filter_value_and_grad(prox_loss_fn, has_aux=True)(coeffs, node, batch, key)
+
+    updates, opt_state = opt_coeffs.update(grads, opt_state)
+    coeffs = eqx.apply_updates(coeffs, updates)
+
+    return node, coeffs, opt_state, loss, aux_data
+
+
+print(f"\n\n=== Beginning training with proximal alternating minimization ... ===")
+print(f"    Number of examples in a batch: {batch_size}")
+print(f"    Maximum number of steps per inner minimization: {nb_inner_steps_max}")
+print(f"    Maximum number of outer minimizations: {nb_outer_steps_max}")
+print(f"    Maximum total number of training steps: {nb_outer_steps_max*nb_inner_steps_max}")
+
+start_time = time.time()
 
 losses_node = []
 losses_coeffs = []
+# nb_steps_node = []
+# nb_steps_coeffs = []
 
-for epoch in range(nb_epochs):
+val_losses = []
 
-    nb_batches = 0
-    loss_sum_node = 0.
-    loss_sum_coeffs = 0.
+train_key, _ = jax.random.split(main_key)
 
-    for i in range(0, nb_data_points, batch_size):
-        batch = (data[0,i:i+batch_size,...], t_eval)
-    
-        for _ in range(inner_steps_node):
+early_stopping_count = 0
+
+for out_step in range(nb_outer_steps_max):
+
+    node_old = model
+    coeffs_old = coeffs
+
+    node_prev = model
+    for in_step_node in range(nb_inner_steps_max):
+
+        nb_batches_node = 0
+        loss_sum_node = jnp.zeros(1)
+        nb_steps_eph_node = 0
+
+        for i in range(0, nb_data_points, batch_size):
+            batch = (data[0,i:i+batch_size,...], t_eval)
+
             train_key, _ = jax.random.split(train_key)
-            model, coeffs, opt_state_node, loss = train_step_node(model, coeffs, batch, opt_state_node, train_key)
 
-        loss_sum_node += loss
+            model, coeffs, opt_state_node, loss_node, aux_data = train_step_node(model, node_old, coeffs, batch, opt_state_node, train_key)
 
-        for _ in range(inner_steps_coeffs):
+            loss_sum_node += jnp.array([loss_node])
+            # nb_steps_eph_node += nb_steps_node_
+
+            nb_batches_node += 1
+
+        diff_node = params_diff_norm_squared(model, node_prev) / params_norm_squared(node_prev)
+        if diff_node < inner_tol_node or out_step==0:
+            break
+        node_prev = model
+
+    loss_epoch_node = loss_sum_node/nb_batches_node
+
+
+    coeffs_prev = coeffs
+    for in_step_coeffs in range(nb_inner_steps_max):
+
+        nb_batches_ctx = 0
+        loss_sum_coeffs = jnp.zeros(1)
+        nb_steps_eph_coeffs = 0
+
+        for i in range(0, nb_data_points, batch_size):
+            batch = (data[0,i:i+batch_size,...], t_eval)
+        
             train_key, _ = jax.random.split(train_key)
-            model, coeffs, opt_state_coeffs, loss = train_step_coeffs(model, coeffs, batch, opt_state_coeffs, train_key)
-        loss_sum_coeffs += loss
 
-        nb_batches += 1
+            model, coeffs, opt_state_coeffs, loss_ctx, aux_data = train_step_coeffs(model, coeffs, coeffs_old, batch, opt_state_coeffs, train_key)
+
+            loss_sum_coeffs += jnp.array([loss_ctx])
+            # nb_steps_eph_coeffs += nb_steps_coeffs_
+
+            nb_batches_ctx += 1
+
+        diff_ctx = params_diff_norm_squared(coeffs, coeffs_prev) / params_norm_squared(coeffs_prev)
+        if diff_ctx < inner_tol_coeffs or out_step==0:
+            break
+        coeffs_prev = coeffs
+
+    loss_epoch_coeffs = loss_sum_coeffs/nb_batches_ctx
 
 
-    # if epoch%renormalize_every==0:      ## TODO Check this
-    #     ## Renormalise the matrices to ensure they are invertible
-    #     train_key, _ = jax.random.split(train_key)
-    #     model = renormalize_model(model, power_iter_steps, train_key)
 
-    if epoch%threshold_every==0:
-        ## Threshold the coefficients
-        coeffs = threshold_coeffs(coeffs, threshold_val)
-
-
-    loss_epoch_node = loss_sum_node/nb_batches
     losses_node.append(loss_epoch_node)
-
-    loss_epoch_coeffs = loss_sum_coeffs/nb_batches
     losses_coeffs.append(loss_epoch_coeffs)
+    # nb_steps_node.append(nb_steps_eph_node)
+    # nb_steps_ctx.append(nb_steps_eph_ctx)
 
-    if epoch%print_every==0 or epoch<=3 or epoch==nb_epochs-1:
-        print(f"    Epoch: {epoch:-5d}      LossNode: {loss_epoch_node:.8f}      LossCoeffs: {loss_epoch_coeffs:.8f}", flush=True)
+    if out_step%print_every==0 or out_step<=3 or out_step==nb_outer_steps_max-1:
+
+        print(f"    Epoch: {out_step:-5d}      LossTrajs: {loss_epoch_node[0]:-.8f}     LossTerms: {aux_data}", flush=True)
+
+        print(f"        -NbInnerStepsNode: {in_step_node+1:4d}\n        -NbInnerStepsCxt: {in_step_coeffs+1:4d}\n        -InnerToleranceNode: {inner_tol_node:.2e}\n        -InnerToleranceCtx:  {inner_tol_coeffs:.2e}\n        -DiffNode: {diff_node:.2e}\n        -DiffCxt:  {diff_ctx:.2e}", flush=True)
+
+    if in_step_node < 1 and in_step_coeffs < 1:
+        early_stopping_count += 1
+    else:
+        early_stopping_count = 0
+
+    if (patience is not None) and (early_stopping_count >= patience):
+        print(f"Stopping early after {patience} steps with no improvement in the loss. Consider increasing the tolerances for the inner minimizations.")
+        break
+
 
 wall_time = time.time() - start_time
 time_in_hmsecs = seconds_to_hours(wall_time)
-print("\nTotal GD training time: %d hours %d mins %d secs" %time_in_hmsecs)
+print("\nTotal gradient descent training time: %d hours %d mins %d secs" %time_in_hmsecs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # %%
