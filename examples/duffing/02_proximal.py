@@ -33,10 +33,10 @@ import time
 
 #%%
 
-SEED = 2024
+SEED = 2025
 main_key = jax.random.PRNGKey(SEED)
 
-dict_size = 32
+dict_size = 8
 mlp_hidden_size = 16
 mlp_depth = 4
 threshold_val = 1e-2
@@ -58,14 +58,14 @@ epsilon = 0e1  ## For contrastive loss
 eta_inv, eta_cont, eta_spar = 1e-3, 1e-2, 1e-1
 
 ## Training hps
-print_every = 1
-nb_epochs = 2
-inner_steps_node = 1
-inner_steps_coeffs = 1
+print_every = 100
+nb_epochs = 500
+inner_steps_node = 20
+inner_steps_coeffs = 20
 
 ## Proximal trianing hps
 nb_outer_steps_max=nb_epochs
-inner_tol_node=1e-8 
+inner_tol_node=1e-9 
 inner_tol_coeffs=1e-8
 nb_inner_steps_max=max(inner_steps_coeffs, inner_steps_node)
 proximal_reg=100.
@@ -73,7 +73,7 @@ patience=nb_epochs
 
 
 ## Data generation hps
-T_horizon = 5
+T_horizon = 20
 skip = 50
 
 #%%
@@ -415,7 +415,6 @@ def renormalize_model(model, nb_iters, key):
 
 
 
-
 #%%
 
 
@@ -622,8 +621,8 @@ for out_step in range(nb_outer_steps_max):
 
             nb_batches_ctx += 1
 
-        diff_ctx = params_diff_norm_squared(coeffs, coeffs_prev) / params_norm_squared(coeffs_prev)
-        if diff_ctx < inner_tol_coeffs or out_step==0:
+        diff_coeffs = params_diff_norm_squared(coeffs, coeffs_prev) / params_norm_squared(coeffs_prev)
+        if diff_coeffs < inner_tol_coeffs or out_step==0:
             break
         coeffs_prev = coeffs
 
@@ -638,9 +637,9 @@ for out_step in range(nb_outer_steps_max):
 
     if out_step%print_every==0 or out_step<=3 or out_step==nb_outer_steps_max-1:
 
-        print(f"    Epoch: {out_step:-5d}      LossTrajs: {loss_epoch_node[0]:-.8f}     LossTerms: {aux_data}", flush=True)
+        print(f"    Epoch: {out_step:-5d}      LossTrajs: {loss_epoch_node[0]:-.8f}     LossTerms: {[d.tolist() for d in aux_data]}", flush=True)
 
-        print(f"        -NbInnerStepsNode: {in_step_node+1:4d}\n        -NbInnerStepsCxt: {in_step_coeffs+1:4d}\n        -InnerToleranceNode: {inner_tol_node:.2e}\n        -InnerToleranceCtx:  {inner_tol_coeffs:.2e}\n        -DiffNode: {diff_node:.2e}\n        -DiffCxt:  {diff_ctx:.2e}", flush=True)
+        print(f"        -NbInnerStepsNode: {in_step_node+1:4d}\n        -NbInnerStepsCoeffs: {in_step_coeffs+1:4d}\n        -InnerToleranceNode: {inner_tol_node:.2e}\n        -InnerToleranceCoeffs:  {inner_tol_coeffs:.2e}\n        -DiffNode: {diff_node:.2e}\n        -DiffCoeffs:  {diff_coeffs:.2e}", flush=True)
 
     if in_step_node < 1 and in_step_coeffs < 1:
         early_stopping_count += 1
@@ -743,6 +742,11 @@ for i in range(X.shape[0]):
         sbplot(X[i, :,0], X[i, :,1], "+", lw=1, ax=ax, color=colors[i])
 
 plt.savefig(f"data/test_traj.png", dpi=300, bbox_inches='tight')
+
+
+## Limit ax x and y axis to (-5,5)
+ax.set_xlim(-5, 5)
+ax.set_ylim(-5, 5)
 
 
 #%% 
