@@ -1,148 +1,243 @@
 Available devices: [cuda(id=0)]
-Data shape: (1, 62, 40, 2)
+Data shape: (1, 12, 40, 2)
+Data shape: (1, 12, 40, 2)
 
 
 === Beginning training with proximal alternating minimization ... ===
-    Number of examples in a batch: 62
+    Number of examples in a batch: 12
     Maximum number of steps per inner minimization: 10
-    Maximum number of outer minimizations: 1000
-    Maximum total number of training steps: 10000
+    Maximum number of outer minimizations: 2000
+    Maximum total number of training steps: 20000
 
 Compiling function "train_step" for neural ode ...
 
 Compiling function "train_step" for coeffs ...
-    Epoch:     0      LossTrajs: 1.56862926     LossTerms: [1.5706064701080322, 4.873198509216309, -0.6444177031517029, 0.0, 0.0]
+    Epoch:     0      LossTrajs: 2.66475248     LossTerms: [2.6664772033691406, 3.248708486557007, -0.38914191722869873, 0.0, 0.0]
         -NbInnerStepsNode:    1
         -NbInnerStepsCoeffs:    1
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 8.65e-08
+        -DiffNode: 5.51e-05
         -DiffCoeffs:  inf
-    Epoch:     1      LossTrajs: 1.56842256     LossTerms: [1.5257235765457153, 4.872835159301758, -0.6594144701957703, 0.0008970739436335862, 2.011857134220918e-07]
+    Epoch:     1      LossTrajs: 2.66608429     LossTerms: [1.8776319026947021, 2.9882853031158447, -0.43008601665496826, 0.008051282726228237, 1.686061659711413e-05]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 2.02e-08
-        -DiffCoeffs:  1.22e-02
-    Epoch:     2      LossTrajs: 1.51938820     LossTerms: [1.480318546295166, 4.873968124389648, -0.6475619077682495, 0.0018772040493786335, 1.9409969809203176e-07]
+        -DiffNode: 4.59e-06
+        -DiffCoeffs:  1.04e-02
+    Epoch:     2      LossTrajs: 1.70609713     LossTerms: [1.561538815498352, 2.858074903488159, -0.49345946311950684, 0.014093248173594475, 9.057173883775249e-06]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 5.15e-08
-        -DiffCoeffs:  2.64e-03
-    Epoch:     3      LossTrajs: 1.47425282     LossTerms: [1.4399365186691284, 4.872648239135742, -0.6485103368759155, 0.002823855960741639, 1.8084185171574063e-07]
+        -DiffNode: 4.63e-05
+        -DiffCoeffs:  1.76e-03
+    Epoch:     3      LossTrajs: 1.51933467     LossTerms: [1.446994662284851, 3.037569284439087, -0.3907427191734314, 0.018099237233400345, 6.703127837681677e-06]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 7.36e-08
-        -DiffCoeffs:  1.07e-03
-    Epoch:   100      LossTrajs: 0.28771156     LossTerms: [0.2852025628089905, 4.294896125793457, -0.7734718322753906, 0.03830914571881294, 1.7643998262428795e-08]
+        -DiffNode: 2.32e-05
+        -DiffCoeffs:  8.33e-04
+    Epoch:   100      LossTrajs: 0.03988411     LossTerms: [0.019019488245248795, 20.92840003967285, -0.48779886960983276, 0.055529654026031494, 6.49573109967605e-07]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 1.20e-07
-        -DiffCoeffs:  4.42e-07
-    Epoch:   200      LossTrajs: 0.13218257     LossTerms: [0.12402217835187912, 10.659017562866211, -0.8898882865905762, 0.05195026844739914, 6.153216247639648e-08]
+        -DiffNode: 9.53e-07
+        -DiffCoeffs:  1.23e-06
+    Epoch:   200      LossTrajs: 0.01516059     LossTerms: [0.00435581523925066, 8.64802074432373, -0.7816553711891174, 0.07142606377601624, 7.663527412660187e-08]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 2.62e-08
-        -DiffCoeffs:  8.80e-07
-    Epoch:   300      LossTrajs: 0.09248618     LossTerms: [0.08390039205551147, 11.485965728759766, -0.9715980887413025, 0.06384153664112091, 9.115682431115602e-09]
+        -DiffNode: 1.52e-07
+        -DiffCoeffs:  1.19e-06
+    Epoch:   300      LossTrajs: 0.02590374     LossTerms: [0.00614770594984293, 7.647510051727295, -0.5956860780715942, 0.06443291902542114, 5.723034064430976e-07]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 1.16e-08
-        -DiffCoeffs:  8.41e-08
-    Epoch:   400      LossTrajs: 0.04762543     LossTerms: [0.03873841464519501, 12.851057052612305, -1.1011279821395874, 0.06844034790992737, 1.3559812828134454e-08]
+        -DiffNode: 6.42e-07
+        -DiffCoeffs:  7.10e-06
+    Epoch:   400      LossTrajs: 0.03260919     LossTerms: [0.003183447988703847, 5.027184009552002, -0.5037698149681091, 0.07153456658124924, 1.8349592778577062e-07]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 2.94e-08
-        -DiffCoeffs:  8.56e-08
-    Epoch:   500      LossTrajs: 0.03404141     LossTerms: [0.029184969142079353, 8.699170112609863, -0.992919921875, 0.07194873690605164, 2.6442088518763285e-09]
+        -DiffNode: 5.12e-07
+        -DiffCoeffs:  1.76e-06
+    Epoch:   500      LossTrajs: 0.01034712     LossTerms: [0.008144693449139595, 5.331989288330078, -0.5639834403991699, 0.07138903439044952, 4.2365167018942884e-07]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 6.89e-09
-        -DiffCoeffs:  1.06e-08
-    Epoch:   600      LossTrajs: 0.02688920     LossTerms: [0.023207146674394608, 7.169295787811279, -1.0220063924789429, 0.07309895753860474, 0.0]
-        -NbInnerStepsNode:   10
-        -NbInnerStepsCoeffs:    1
-        -InnerToleranceNode: 1.00e-09
-        -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 4.84e-09
-        -DiffCoeffs:  9.67e-09
-    Epoch:   700      LossTrajs: 0.00191549     LossTerms: [0.002853779587894678, 3.729877233505249, -1.4017205238342285, 0.07335036993026733, 1.4324871955295748e-08]
+        -DiffNode: 1.69e-06
+        -DiffCoeffs:  8.67e-06
+    Epoch:   600      LossTrajs: 0.01002001     LossTerms: [0.002713182708248496, 2.57179594039917, -1.4171345233917236, 0.07180286943912506, 4.164126039540861e-07]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 7.72e-09
-        -DiffCoeffs:  4.54e-08
-    Epoch:   800      LossTrajs: -0.00421586     LossTerms: [0.0005431384779512882, 2.514117479324341, -1.3762123584747314, 0.06570008397102356, 4.426675914714906e-09]
+        -DiffNode: 8.23e-07
+        -DiffCoeffs:  1.57e-06
+    Epoch:   700      LossTrajs: 0.01844497     LossTerms: [0.007044677156955004, 2.181844472885132, -0.7275731563568115, 0.06261385232210159, 1.0187141015194356e-06]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 2.59e-09
-        -DiffCoeffs:  2.87e-08
-    Epoch:   900      LossTrajs: -0.00564406     LossTerms: [0.00034254477941431105, 2.2185299396514893, -1.624727725982666, 0.05736803635954857, 6.0838187820877465e-09]
+        -DiffNode: 6.26e-07
+        -DiffCoeffs:  1.48e-05
+    Epoch:   800      LossTrajs: 0.00871292     LossTerms: [0.005006312392652035, 1.6855831146240234, -0.8571147918701172, 0.06163925677537918, 1.0355014410379226e-06]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 3.54e-09
-        -DiffCoeffs:  2.77e-08
-    Epoch:   999      LossTrajs: -0.00779481     LossTerms: [0.0003124481299892068, 1.9598915576934814, -2.0918760299682617, 0.049921680241823196, 2.383900721270038e-08]
+        -DiffNode: 9.83e-07
+        -DiffCoeffs:  1.59e-05
+    Epoch:   900      LossTrajs: -0.01567752     LossTerms: [0.0020650706719607115, 1.5042471885681152, -2.2860090732574463, 0.06302297115325928, 4.511404085860704e-07]
         -NbInnerStepsNode:   10
         -NbInnerStepsCoeffs:   10
         -InnerToleranceNode: 1.00e-09
         -InnerToleranceCoeffs:  1.00e-08
-        -DiffNode: 5.01e-09
-        -DiffCoeffs:  2.11e-07
+        -DiffNode: 4.73e-07
+        -DiffCoeffs:  2.30e-06
+    Epoch:  1000      LossTrajs: -0.00765061     LossTerms: [0.001365768606774509, 1.0509802103042603, -2.4615843296051025, 0.05871929973363876, 2.066271918010898e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 2.37e-07
+        -DiffCoeffs:  3.91e-06
+    Epoch:  1100      LossTrajs: 0.00621198     LossTerms: [0.0026631010696291924, 1.9852960109710693, -0.8315441608428955, 0.05836888775229454, 8.504335937686847e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 3.17e-07
+        -DiffCoeffs:  1.67e-05
+    Epoch:  1200      LossTrajs: -0.00105979     LossTerms: [0.0006103539490140975, 1.328543782234192, -0.9835510849952698, 0.05358799546957016, 3.786590951904145e-08]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 1.76e-07
+        -DiffCoeffs:  1.17e-06
+    Epoch:  1300      LossTrajs: -0.03612593     LossTerms: [0.0065834918059408665, 1.7236013412475586, -1.1192258596420288, 0.053881436586380005, 1.1735671705537243e-06]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 1.27e-06
+        -DiffCoeffs:  1.50e-05
+    Epoch:  1400      LossTrajs: 0.01390310     LossTerms: [0.012214278802275658, 1.6417005062103271, -3.5955662727355957, 0.04978569597005844, 1.2549227221825277e-06]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 1.51e-06
+        -DiffCoeffs:  2.62e-05
+    Epoch:  1500      LossTrajs: -0.07268577     LossTerms: [0.0007246829336509109, 1.177062749862671, -7.96018123626709, 0.04778601974248886, 1.4230768385914416e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 1.89e-07
+        -DiffCoeffs:  1.51e-06
+    Epoch:  1600      LossTrajs: -0.00443808     LossTerms: [0.0040811412036418915, 1.6993669271469116, -6.1101250648498535, 0.04758518934249878, 1.205747707899718e-06]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 3.80e-07
+        -DiffCoeffs:  2.16e-05
+    Epoch:  1700      LossTrajs: -0.10960092     LossTerms: [0.0014470447786152363, 1.5206403732299805, -11.640131950378418, 0.043967653065919876, 5.18908223057224e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 9.26e-08
+        -DiffCoeffs:  2.39e-06
+    Epoch:  1800      LossTrajs: -0.07204770     LossTerms: [0.0025531926658004522, 1.5137856006622314, -1.0815095901489258, 0.040998585522174835, 4.000992248620605e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 3.67e-07
+        -DiffCoeffs:  3.75e-06
+    Epoch:  1900      LossTrajs: -0.12608732     LossTerms: [0.0007791347452439368, 1.0711008310317993, -1.2399842739105225, 0.03691808506846428, 1.2803148763396166e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 6.76e-08
+        -DiffCoeffs:  1.29e-06
+    Epoch:  1999      LossTrajs: -0.14629412     LossTerms: [0.013875501230359077, 2.3135671615600586, -1.7795844078063965, 0.04291349649429321, 7.035434350655123e-07]
+        -NbInnerStepsNode:   10
+        -NbInnerStepsCoeffs:   10
+        -InnerToleranceNode: 1.00e-09
+        -InnerToleranceCoeffs:  1.00e-08
+        -DiffNode: 8.74e-07
+        -DiffCoeffs:  7.71e-06
 
-Total gradient descent training time: 2 hours 55 mins 5 secs
-Test MSE: 514.27105713
-Coeffs: 
+Total gradient descent training time: 6 hours 24 mins 52 secs
+Test MSE: 1400476.50000000
+coeffs_: 
 	  - Lambdas: 
- [[-3.7498210e-02 -5.5258591e-03]
- [-1.4538020e-02 -2.8325563e-05]
- [-3.2923281e-02 -3.7281618e-02]
- [-4.0187319e-05 -5.5787582e-03]] 
+ [[-0.05185801  0.01202335]
+ [ 0.02148907 -0.03467766]
+ [-0.00990856 -0.07104196]
+ [ 0.02203528 -0.00235339]
+ [ 0.0008595  -0.00545234]
+ [-0.00477813  0.00065569]
+ [ 0.01101758 -0.00894497]
+ [-0.00339749  0.05005087]] 
 
 	  - Gammas: 
- [[8.27271119e-02 4.38502102e-05]
- [1.15830044e-04 1.82447225e-01]
- [1.10117355e-04 3.94272851e-04]
- [2.63632664e-05 3.09243696e-05]]
+ [[ 0.1549373  -0.10338231]
+ [-0.00548724  0.02431695]
+ [ 0.03659294  0.01612232]
+ [-0.01097786  0.01761852]
+ [-0.00090291  0.0059614 ]
+ [ 0.00830729  0.03584534]
+ [-0.0008743   0.05316048]
+ [ 0.00077041 -0.04195874]]
 Active coefficients lambda: 
- [[1 0]
- [1 0]
+ [[1 1]
  [1 1]
- [0 0]]
-Active coefficients gammas: 
- [[1 0]
  [0 1]
+ [1 0]
  [0 0]
- [0 0]]
+ [0 0]
+ [1 0]
+ [0 1]]
+Active coefficients gammas: 
+ [[1 1]
+ [0 1]
+ [1 1]
+ [1 1]
+ [0 0]
+ [0 1]
+ [0 1]
+ [0 1]]
 
-Number of parameters in the model: 6400
+Number of parameters in the model: 17408
 Vector field at [1,1]: 
- [[ 1.4804572   0.81339383]
- [ 5.610048   -1.4621122 ]
- [-9.987112    7.2077694 ]
- [-3.0264788   0.36314976]]
+ [[-0.05646515  0.49347174]
+ [14.978082    3.1254048 ]
+ [-0.46722507  1.6488074 ]
+ [ 0.3323171  -0.91209745]
+ [ 0.365744    1.3895435 ]
+ [ 1.0412049  -0.9878504 ]
+ [ 0.7827238  -2.496266  ]
+ [-1.4330602   2.864233  ]]
 Vector field at [2,2]: 
- [[ 2.3488238  1.8193736]
- [ 6.570696  -1.4545121]
- [-8.255913   7.7413883]
- [-3.1364036  1.3177359]]
+ [[ 1.0771751   1.3770261 ]
+ [34.806995    7.3269033 ]
+ [ 0.19176292  1.6201093 ]
+ [ 0.8326001  -1.174994  ]
+ [ 1.1066792   2.7591543 ]
+ [ 2.5746996  -2.9650908 ]
+ [ 1.5417315  -0.8764465 ]
+ [-1.9490895   6.2025537 ]]

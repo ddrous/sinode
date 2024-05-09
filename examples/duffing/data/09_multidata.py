@@ -56,7 +56,7 @@ spectral_scaling = 1.0 # since the spectral norm is under-estimated wia power it
 fixed_point_steps = 5
 
 ## Optimiser hps
-init_lr = 5e-4
+init_lr = 1e-4
 sched_factor = 1.0
 
 epsilon = 0e1  ## For contrastive loss
@@ -64,7 +64,7 @@ eta_inv, eta_cont, eta_spar = 1e-3, 1e-2, 1e-1
 
 ## Training hps
 print_every = 100
-nb_epochs = 2000
+nb_epochs = 5000
 inner_steps_node = 10
 inner_steps_coeffs = 10
 
