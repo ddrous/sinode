@@ -8,11 +8,7 @@ from ._utils import *
 
 
 class Trainer:
-    def __init__(self, dataloader, model, coeffs, loss_fn, optimizer_model, optimizer_coeffs, *, key):
-        self.key = key
-
-        ## Assert nb_envs == len(coeffs)
-        assert dataloader.nb_envs == len(coeffs), "ERROR: Number of environments in the dataloader must match the number of coefficients provided."
+    def __init__(self, model, coeffs, loss_fn, optimizer_model, optimizer_coeffs):
 
         self.model = model
         self.coeffs = coeffs
@@ -51,6 +47,10 @@ class Trainer:
                        *, key):
         """ Algorithm 2 in https://proceedings.mlr.press/v97/li19n.html 
         """
+
+        ## Assert nb_envs == len(coeffs)
+        assert train_dataloader.nb_envs == len(self.coeffs), "ERROR: Number of environments in the dataloader must match the number of coefficients provided."
+
 
         key = key
 

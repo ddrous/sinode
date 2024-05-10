@@ -141,3 +141,17 @@ def mats_to_vec(mats, res):
 def get_id_current_time():
     """ Returns a string of the current time in the format as an ID """
     return time.strftime("%H%M%S")
+
+
+def power_iteration(matrix, nb_iters, key):
+    """ Power iteration for a single matrix """
+    u = jax.random.normal(key, (matrix.shape[0],))
+    v = jax.random.normal(key, (matrix.shape[1],))
+
+    for _ in range(nb_iters):
+        v = matrix.T@u
+        v = v / jnp.linalg.norm(v)
+        u = matrix@v
+        u = u / jnp.linalg.norm(u)
+
+    return u.T@matrix@v

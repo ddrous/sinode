@@ -61,7 +61,7 @@ class VisualTester:
 
 
 
-    def visualize(self, data_loader, e=None, traj=None, dims=(0,1), int_cutoff=1.0, save_path=False, key=None):
+    def visualize(self, data_loader, e=None, traj=None, dims=(0,1), int_cutoff=1.0, plot_tol=1e-6, save_path=False, key=None):
 
         if e is None or traj is None:
             if key is None:
@@ -117,8 +117,13 @@ class VisualTester:
         ax['B'].set_title("Phase space")
         ax['B'].legend()
 
-        losses_model = np.vstack(self.trainer.losses_model)
-        losses_coeffs = np.vstack(self.trainer.losses_coeffs)
+        losses_model = self.trainer.losses_model
+        losses_coeffs = self.trainer.losses_coeffs
+
+        ## Since loss can be negative
+        min_loss = min(np.min(losses_model), np.min(losses_coeffs), 0.)
+        losses_model += abs(min_loss) + plot_tol
+        losses_coeffs += abs(min_loss) + plot_tol
 
         mke = np.ceil(losses_model.shape[0]/100).astype(int)
 
@@ -149,7 +154,89 @@ class VisualTester:
 
 
 
-    def ablate_coeffs():
-        """ Set some coefficients to zero and leave others unchanged, then plot """
-        pass
+    # def ablate_coeffs():
+    #     """ Set some coefficients to zero and leave others unchanged, then plot """
 
+
+    #     saved_gammas = coeffs_.gammas
+    #     saved_lambdas = coeffs_.lambdas
+
+    #     for i in range(1):
+    #     # for i in range(dict_size):
+    #     #     print("Setting zeros at position: ", i)
+
+    #     #     new_lambdas = saved_lambdas.at[i].set(0.)
+    #     #     new_gammas = saved_gammas.at[i].set(0.)
+
+    #     #     # new_lambdas = saved_lambdas.at[i].mul(2.)
+    #     #     # new_gammas = saved_gammas.at[i].mul(2.)
+
+    #     #     # new_lambdas = jnp.zeros_like(saved_lambdas)
+    #     #     # new_gammas = jnp.zeros_like(saved_gammas)
+    #     #     # new_lambdas = new_lambdas.at[i].set(saved_lambdas[i])
+    #     #     # new_gammas = new_gammas.at[i].set(saved_gammas[i])
+
+    #     #     coeffs_ = eqx.tree_at(lambda m: m.lambdas, coeffs_, new_lambdas)
+    #     #     coeffs_ = eqx.tree_at(lambda m: m.gammas, coeffs_, new_gammas)
+
+    #         X_hat = test_model(model, coeffs_, (X[:, 0,:], t), test_key)
+
+    #         print(f"Test MSE: {jnp.mean((X-X_hat)**2):.8f}")
+
+    #         fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+
+    #         colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w', 'orange', 'yellow', 'purple', 'brown', 'pink', 'gray', 'olive', 'cyan']
+    #         colors = colors*10
+
+    #         for i in range(X.shape[0]):
+    #             if i==0:
+    #                 sbplot(X_hat[i, :,0], X_hat[i, :,1], "-", x_label='x', y_label='y', label=f'Pred', title=f'Phase space', ax=ax, alpha=0.5, color=colors[i])
+    #                 sbplot(X[i, :,0], X[i, :,1], "+", lw=1, label=f'True', ax=ax, color=colors[i])
+    #             else:
+    #                 sbplot(X_hat[i, :,0], X_hat[i, :,1], "-", x_label='x', y_label='y', ax=ax, alpha=0.5, color=colors[i])
+    #                 sbplot(X[i, :,0], X[i, :,1], "+", lw=1, ax=ax, color=colors[i])
+
+    #         ## Limit ax x and y axis to (-5,5)
+    #         # ax.set_xlim(-5, 5)
+    #         # ax.set_ylim(-5, 5)
+    #         plt.show()
+
+
+    #     plt.savefig(f"data/ablated_traj.png", dpi=300, bbox_inches='tight')
+
+
+
+
+
+
+
+
+
+
+
+    # def symbolic_regression():
+    #     # ## Print coeffs_
+    #     print("coeffs_: \n\t  - Lambdas: \n", coeffs_.lambdas, "\n\n\t  - Gammas: \n", coeffs_.gammas)
+    #     # print("coeffs_: \n\t  - Lambdas: \n", coeffs_.lambdas)
+
+    #     ## Print cloeffs lambda with abs > 1e-2
+    #     active_coeffs_ = jnp.where(jnp.abs(coeffs_.lambdas)>=threshold_val, 1, 0)
+    #     print("Active coefficients lambda: \n", active_coeffs_)
+
+    #     ## Same for gammas
+    #     active_coeffs_ = jnp.where(jnp.abs(coeffs_.gammas)>=threshold_val, 1, 0)
+    #     print("Active coefficients gammas: \n", active_coeffs_)
+
+    #     ## Count the number of paramters in the model
+    #     params = eqx.filter(model, eqx.is_array)
+    #     nb_params = jnp.sum(jnp.array([jnp.prod(jnp.array(p.shape)) for p in jax.tree.flatten(params)[0]]))
+    #     print(f"\nNumber of parameters in the model: {nb_params}")
+
+    #     ## Print model basis functions
+    #     # print("Model basis functions: ", model.vector_field.basis_funcs.layers)
+    #     # print("Model basis functions: ", model.vector_field.basis_funcs.layers[2].weight)
+
+
+    #     ## Evaluate the vector field a few points
+    #     print("Vector field at [1,1]: \n", evaluate_funcs_dir(model.vector_field.basis_funcs, jnp.array([1., 1.])))
+    #     print("Vector field at [2,2]: \n", evaluate_funcs_dir(model.vector_field.basis_funcs, jnp.array([2., 2.])))
