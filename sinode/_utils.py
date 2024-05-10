@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
+import time
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -124,3 +125,19 @@ def params_diff_norm_squared(params1, params2):
     params2 = eqx.filter(params2, eqx.is_array, replace=jnp.zeros(1))
     diff_flat, _, _ = flatten_pytree(jax.tree_util.tree_map(lambda x, y: x-y, params1, params2))
     return (diff_flat.T@diff_flat) / diff_flat.shape[0]
+
+
+
+def vec_to_mats(vec_uv, res=32, nb_mats=2):
+    """ Reshapes a vector into a set of 2D matrices """
+    UV = jnp.split(vec_uv, nb_mats)
+    return [jnp.reshape(UV[i], (res, res)) for i in range(nb_mats)]
+
+def mats_to_vec(mats, res):
+    """ Flattens a set of 2D matrices into a single vector """
+    return jnp.concatenate([jnp.reshape(mats[i], res * res) for i in range(len(mats))])
+
+
+def get_id_current_time():
+    """ Returns a string of the current time in the format as an ID """
+    return time.strftime("%H%M%S")
