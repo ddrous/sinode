@@ -5,10 +5,8 @@ class DataLoader:
     def __init__(self, dataset, t_eval=None, batch_size=-1, int_cutoff=1.0, shuffle=True, adaptation=False, data_id=None, *, key):
 
         self.data_id = data_id if data_id else get_id_current_time()
-        # if data_id is None:
-        #     warnings.warn(f"You did not provide a dataloader id. A new one has been generated: {self.data_id}")
-
-        # print("Creating new dataloader with id: ", self.data_id)
+        if data_id is None:
+            warnings.warn(f"You did not provide a dataloader id. A new one has been generated: {self.data_id}")
 
         if isinstance(dataset, str):
             raw_dat = jnp.load(dataset)
@@ -36,10 +34,8 @@ class DataLoader:
 
         self.int_cutoff = int(int_cutoff*self.nb_steps_per_traj)    ## integration cutoff
 
-        if (batch_size!=-1) and batch_size < 0 or batch_size > self.nb_trajs_per_env:
+        if batch_size < 0 or batch_size > self.nb_trajs_per_env:
             print("WARNING: batch_size must be between 0 and nb_trajs_per_env. Setting batch_size to maximum.")
-            self.batch_size = self.nb_trajs_per_env
-        elif batch_size == -1:
             self.batch_size = self.nb_trajs_per_env
         else:
             self.batch_size = batch_size

@@ -44,7 +44,8 @@ import time
 SEED = 2026
 main_key = jax.random.PRNGKey(SEED)
 train = True
-gen_data=False
+
+gen_data=True
 run_folder="runs/240510-224214/"
 
 ## Data generation hps ##
