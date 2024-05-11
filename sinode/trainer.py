@@ -228,7 +228,7 @@ class Trainer:
             losses_model.append(loss_epoch_model)
             losses_coeffs.append(loss_epoch_coeffs)
 
-            if out_step%print_every==0 or out_step<=3 or out_step==nb_outer_steps_max-1:
+            if out_step%print_every==0 or out_step==nb_outer_steps_max-1:
 
                 self.losses_model = jnp.array(losses_model)
                 self.losses_coeffs = jnp.array(losses_coeffs)

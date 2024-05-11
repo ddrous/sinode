@@ -12,6 +12,7 @@
 # - Hopefully we get a foundational model
 
 #%%
+
 %load_ext autoreload
 %autoreload 2
 
@@ -43,9 +44,9 @@ import time
 ## Main hps ##
 SEED = 2026
 main_key = jax.random.PRNGKey(SEED)
-train = True
-gen_data=True
-# run_folder="runs/240510-224214/"
+train = False
+gen_data = True
+run_folder="runs/240511-151804/"
 
 ## Data generation hps ##
 T_horizon = 20
@@ -75,15 +76,15 @@ spectral_scaling = 1.0 # since the spectral norm is under-estimated wia power it
 
 
 ## (Proximal) Training hps ##
-nb_outer_steps_max=2
-inner_tol_model=1e-9 
+nb_outer_steps_max=200
+inner_tol_model=1e-9
 inner_tol_coeffs=1e-8
 nb_inner_steps_max=10
 proximal_beta=100.
 patience=nb_outer_steps_max
 
 ## Other hps ##
-print_every = 100
+print_every = 10
 
 
 #%%
@@ -98,8 +99,14 @@ def duffing1(t, state, a, b, c):
 def duffing2(t, state, a, b, c):
     x, y = state
     dxdt = y
-    dydt = -c*x**3 / 5.
+    dydt = -x*b/10 - c*x**3 / 5.
     return [dxdt, dydt]
+
+# def duffing3(t, state, a, b, c):
+#     x, y = state
+#     dxdt = y
+#     dydt = -x*b - c*x**3 / 5.
+#     return [dxdt, dydt]
 
 # Parameters
 a, b, c = -1/2., -1, 1/10.
@@ -502,7 +509,7 @@ if train == True:
                             print_every=print_every,
                             save_path=run_folder, 
                             train_dataloader=train_dataloader, 
-                            val_dataloader=test_dataloader, 
+                            val_dataloader=train_dataloader, 
                             patience=patience,
                             int_prop=1.0,
                             key=train_key)
@@ -528,7 +535,10 @@ vis_key = jax.random.PRNGKey(time.time_ns())
 
 visualtester.test(test_dataloader)
 
-visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", key=vis_key)
+# visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", key=vis_key)
+# visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", e=0, traj=18)
+
+visualtester.visualize_batch(test_dataloader, e_range=(0,), loss_plot_tol=1e-6, phase_plot_xlim=(-15,15), phase_plot_ylim=(-3,3), save_path=run_folder+"results_batch.png")
 
 
 

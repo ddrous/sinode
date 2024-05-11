@@ -69,7 +69,7 @@ class VisualTester:
                 e_key, traj_key = jax.random.split(key)
 
         e = e if e is not None else jax.random.randint(e_key, (1,), 0, data_loader.nb_envs)[0]
-        traj = traj is not None if traj else jax.random.randint(traj_key, (1,), 0, data_loader.nb_trajs_per_env)[0]
+        traj = traj if traj is not None else jax.random.randint(traj_key, (1,), 0, data_loader.nb_trajs_per_env)[0]
 
         t_eval = data_loader.t_eval
         test_length = int(data_loader.nb_steps_per_traj*int_cutoff)
@@ -151,7 +151,112 @@ class VisualTester:
 
         if save_path:
             plt.savefig(save_path, dpi=100, bbox_inches='tight')
-            print("Testing finished. Figure saved in:", save_path);
+            print("Visualization finished. Figure saved in:", save_path);
+
+
+
+
+
+
+    def visualize_batch(self, data_loader, e_range=None, dims=(0,1), int_cutoff=1.0, loss_plot_tol=1e-3, phase_plot_xlim=None, phase_plot_ylim=None, figsize=None, save_path=False):
+
+        t_eval = data_loader.t_eval
+        test_length = int(data_loader.nb_steps_per_traj*int_cutoff)
+        t_test = t_eval[:test_length]
+
+        print("==  Begining out-of-distribution bulk visualisation ... ==")
+        print("    Visualized dimensions:", dims)
+        print("    Final length of the training trajectories:", data_loader.int_cutoff)
+        print("    Length of the testing trajectories:", test_length)
+
+        figsize = figsize if figsize else (6*2, 3.5*2)
+        fig, ax = plt.subplot_mosaic('AB;CC', figsize=figsize)
+
+        mks = 2
+        dim0, dim1 = dims
+        # colors0 = ['deepskyblue', 'royalblue', 'violet', 'purple', 'turquoise', 'teal']*10
+        # colors1 = ['red', 'green', 'blue', 'orange', 'yellow', 'purple', 'brown', 'pink', 'gray', 'olive', 'cyan']*10
+
+        colors0 = ['red', 'green', 'blue', 'orange', 'lightgreen', 'olive', 'salmon', 'gray', 'khaki', 'grey', 'goldenrod']*10
+        colors1 = ['darkred', 'darkgreen', 'darkblue', 'darkorange', 'darkseagreen', 'darkolivegreen', 'darksalmon', 'darkgray', 'darkkhaki', 'darkslategrey', 'darkgoldenrod']*10
+
+        e_range = e_range if e_range else range(data_loader.nb_envs)
+
+        for e_, e in enumerate(e_range):
+
+            X = data_loader.dataset[e, :, :test_length, :]
+            X_hat, _ = self.trainer.model(X[:, 0, :], t_test, self.trainer.coeffs[e])
+
+            for traj in range(data_loader.nb_trajs_per_env):
+
+                label1 = f"$x_{{{dim0}}}$ (True)" if traj==0 and e_==0 else None
+                label2 = f"$\\hat{{x}}_{{{dim0}}}$ (Pred)" if traj==0 and e_==0 else None
+
+                label3 = f"$x_{{{dim1}}}$ (True)" if traj==0 and e_==0 else None
+                label4 = f"$\\hat{{x}}_{{{dim1}}}$ (Pred)" if traj==0 and e_==0 else None
+
+                label5 = "True" if traj==0 and e_==0 else None
+                label6 = "Pred" if traj==0 and e_==0 else None
+
+                ax['A'].plot(t_test, X_hat[traj, :, dim0], c=colors0[traj], label=label2, alpha=0.5, markersize=mks)
+                ax['A'].plot(t_test, X[traj, :, dim0], "o", c=colors0[traj], label=label1)
+
+                ax['A'].plot(t_test, X_hat[traj, :, dim1], c=colors1[traj], label=label4, alpha=0.5, markersize=mks)
+                ax['A'].plot(t_test, X[traj, :, dim1], "x", c=colors1[traj], label=label3)
+
+                ax['B'].plot(X_hat[traj, :, dim0], X_hat[traj, :, dim1], c=colors1[traj], alpha=0.5, label=label6)
+                ax['B'].plot(X[traj, :, dim0], X[traj, :, dim1], ".", c=colors1[traj], label=label5)
+
+        ax['A'].set_xlabel("Time")
+        ax['A'].set_ylabel("State")
+        ax['A'].set_title("Trajectories")
+        ax['A'].legend()
+
+        ax['B'].set_xlabel(f"$x_{{{dim0}}}$")
+        ax['B'].set_ylabel(f"$x_{{{dim1}}}$")
+        ax['B'].set_title("Phase space")
+        ax['B'].legend()
+
+        if phase_plot_xlim:
+            ax["B"].set_xlim(phase_plot_xlim)
+        if phase_plot_ylim:
+            ax["B"].set_ylim(phase_plot_ylim)
+
+        losses_model = self.trainer.losses_model
+        losses_coeffs = self.trainer.losses_coeffs
+
+        ## Since loss can be negative
+        min_loss = min(np.min(losses_model), np.min(losses_coeffs), 0.)
+        losses_model += abs(min_loss) + loss_plot_tol
+        losses_coeffs += abs(min_loss) + loss_plot_tol
+
+        mke = np.ceil(losses_model.shape[0]/100).astype(int)
+
+        label_model = "Model Loss" if data_loader.adaptation == False else "Node Loss Adapt"
+        ax['C'].plot(losses_model[:], label=label_model, color="grey", linewidth=3, alpha=1.0)
+
+        label_coeffs = "Coeffs Loss" if data_loader.adaptation == False else "Context Loss Adapt"
+        ax['C'].plot(losses_coeffs[:], "x-", markevery=mke, markersize=mks, label=label_coeffs, color="grey", linewidth=1, alpha=0.5)
+
+        if data_loader.adaptation==False and len(self.trainer.val_losses)>0:
+            val_losses = np.concatenate(self.trainer.val_losses)
+            ax['C'].plot(val_losses[:,0], val_losses[:,1], "y.", label="Validation Loss", linewidth=3, alpha=0.5)
+
+        ax['C'].set_xlabel("Epochs")
+        ax['C'].set_title("Loss Terms")
+        ax['C'].set_yscale('log')
+        ax['C'].legend()
+
+        plt.suptitle(f"Results for environments {e_range}", fontsize=14)
+
+        plt.tight_layout()
+        plt.draw();
+
+        if save_path:
+            plt.savefig(save_path, dpi=100, bbox_inches='tight')
+            print("Visualization finished. Figure saved in:", save_path);
+
+
 
 
 
