@@ -44,8 +44,8 @@ import time
 SEED = 2026
 main_key = jax.random.PRNGKey(SEED)
 train = True
-gen_data=False
-run_folder="runs/240510-224214/"
+gen_data=True
+# run_folder="runs/240510-224214/"
 
 ## Data generation hps ##
 T_horizon = 20
@@ -75,7 +75,7 @@ spectral_scaling = 1.0 # since the spectral norm is under-estimated wia power it
 
 
 ## (Proximal) Training hps ##
-nb_outer_steps_max=2000
+nb_outer_steps_max=2
 inner_tol_model=1e-9 
 inner_tol_coeffs=1e-8
 nb_inner_steps_max=10
@@ -87,6 +87,7 @@ print_every = 100
 
 
 #%%
+
 # Define the Duffing system
 def duffing1(t, state, a, b, c):
     x, y = state
@@ -174,8 +175,8 @@ if gen_data == True:
 else:
     ## Run folder must have been given up
 
-    train_data, t_eval = np.load(run_folder+"train_data.npy").values()
-    test_data, t_eval = np.load(run_folder+"test_data.npy").values()
+    train_data, t_eval = np.load(run_folder+"train_data.npz").values()
+    test_data, t_eval = np.load(run_folder+"test_data.npz").values()
 
     print("No training. Loading data from:", run_folder)
 
@@ -345,7 +346,7 @@ class NeuralODE(eqx.Module):
                     # adjoint=diffrax.RecursiveCheckpointAdjoint(),
                     max_steps=4096
                 )
-            return sol.ys, sol.stats["n_steps"]
+            return sol.ys, sol.stats["num_steps"]
 
             # sol = RK4(self.vector_field, 
             #           (t_eval[0], t_eval[-1]), 
@@ -460,6 +461,7 @@ def renormalize_model(model, nb_iters, key):
 
 
 
+
 #%%
 
 
@@ -470,7 +472,8 @@ sched_model = optax.piecewise_constant_schedule(init_value=init_lr, boundaries_a
 sched_coeffs = optax.piecewise_constant_schedule(init_value=init_lr, boundaries_and_scales=boundaries_and_scales)
 
 opt_model = optax.adam(sched_model)
-opt_coeffs = (optax.adam(sched_coeffs), optax.adam(sched_coeffs))
+# opt_coeffs = (optax.adam(sched_coeffs), optax.adam(sched_coeffs))
+opt_coeffs = optax.adam(sched_coeffs)
 
 
 
@@ -496,8 +499,9 @@ if train == True:
                             proximal_reg=proximal_beta, 
                             inner_tol_model=inner_tol_model, 
                             inner_tol_coeffs=inner_tol_coeffs,
-                            print_error_every=print_every,
+                            print_every=print_every,
                             save_path=run_folder, 
+                            train_dataloader=train_dataloader, 
                             val_dataloader=test_dataloader, 
                             patience=patience,
                             int_prop=1.0,
@@ -524,7 +528,7 @@ vis_key = jax.random.PRNGKey(time.time_ns())
 
 visualtester.test(test_dataloader)
 
-visualtester.visualize(test_dataloader, savefigdir=run_folder+"results.png", key=vis_key)
+visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", key=vis_key)
 
 
 

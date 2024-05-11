@@ -21,19 +21,18 @@ class VisualTester:
         if verbose == True:
             if data_loader.adaptation == False:
                 print("==  Begining in-domain testing ... ==")
-                print("    Number of training environments:", self.trainer.dataloader.nb_envs)
+                print("    Number of training environments:", data_loader.nb_envs)
             else:
                 print("==  Begining out-of-distribution testing ... ==")
-                print("    Number of training environments:", self.trainer.dataloader.nb_envs)
+                print("    Number of training environments:", data_loader.nb_envs)
                 print("    Number of adaptation environments:", data_loader.nb_envs)
-            print("    Final length of the training trajectories:", self.trainer.dataloader.int_cutoff)
             print("    Length of the testing trajectories:", test_length)
 
         assert data_loader.nb_envs == len(self.trainer.coeffs), "The number of environments in the test dataloader must be the same as the number coefficients."
 
         X_hat = np.zeros_like(X)
         for e in range(data_loader.nb_envs):
-            X_hat[e, ...], _ = jax.vmap(self.trainer.model, in_axes=(0, None, 0))(
+            X_hat[e, ...], _ = self.trainer.model(
                     X[e, :, 0, :], 
                     t_test, 
                     self.trainer.coeffs[e]
@@ -84,7 +83,7 @@ class VisualTester:
         print("    Environment id:", e)
         print("    Trajectory id:", traj)
         print("    Visualized dimensions:", dims)
-        print("    Final length of the training trajectories:", self.trainer.dataloader.int_cutoff)
+        print("    Final length of the training trajectories:", data_loader.int_cutoff)
         print("    Length of the testing trajectories:", test_length)
 
         # if data_loader.adaptation == False:
@@ -92,7 +91,10 @@ class VisualTester:
         # else:
         #     contexts = self.trainer.learner.contexts_adapt.params
 
-        X_hat, _ = self.trainer.model(X[0, :], t_test, self.trainer.coeffs[e])
+        X_hat, _ = self.trainer.model(X[:, 0, :], t_test, self.trainer.coeffs[e])
+        
+        X = X.squeeze()
+        X_hat = X_hat.squeeze()
 
         fig, ax = plt.subplot_mosaic('AB;CC', figsize=(6*2, 3.5*2))
 

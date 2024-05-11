@@ -94,7 +94,7 @@ class Trainer:
 
             ##---- Compute the average quantities to return ----##
             avg_loss = loss[0]
-            avg_aux_data = aux_data[0]
+            avg_aux_data = list(aux_data[0])
             len_aux_data = len(avg_aux_data)
 
             for e in range(1, nb_envs):
@@ -127,21 +127,18 @@ class Trainer:
 
             loss = []
             aux_data = []
-
-            new_coeffs = []
-            new_opt_states = []
+            all_grads =[]
 
             for e in range(nb_envs):
                 (loss_, aux_data_), grads_ = grad_loss_fn(coeffs[e], model, (batch[0][e], batch[1]), coeffs_old[e], key)
 
-                updates, opt_state_ = opt_coeffs[e].update(grads_, opt_state[e])
-                coeffs_ = eqx.apply_updates(coeffs[e], updates)
+                all_grads.append(grads_)
 
                 loss.append(loss_)
                 aux_data.append(aux_data_)
 
-                new_coeffs.append(coeffs_)
-                new_opt_states.append(opt_state_)
+            updates, opt_state = opt_coeffs.update(tuple(all_grads), opt_state)
+            coeffs = eqx.apply_updates(coeffs, updates)
 
             ##---- Compute the average loss to return ----##
             avg_loss = loss[0]
@@ -150,7 +147,7 @@ class Trainer:
             avg_loss /= nb_envs
             ##--------------------------------##
 
-            return model, tuple(new_coeffs), tuple(new_opt_states), avg_loss, (loss, tuple(aux_data))
+            return model, coeffs, opt_state, avg_loss, (loss, tuple(aux_data))
 
 
         @eqx.filter_jit
@@ -186,7 +183,7 @@ class Trainer:
                 nb_batches_model = 0
                 loss_sum_model = 0.
                 
-                for _, batch in enumerate(self.dataloader):
+                for _, batch in enumerate(train_dataloader):
 
                     train_key, _ = jax.random.split(train_key)
 
@@ -209,7 +206,7 @@ class Trainer:
                 nb_batches_ctx = 0
                 loss_sum_coeffs = 0.
 
-                for _, batch in enumerate(self.dataloader):
+                for _, batch in enumerate(train_dataloader):
 
                     train_key, _ = jax.random.split(train_key)
 
@@ -248,9 +245,9 @@ class Trainer:
                 if val_dataloader is not None:
 
                     ind_crit,_ = tester.test(val_dataloader, int_cutoff=1.0, criterion=val_criterion, verbose=False)
-                    self.val_losses.append(np.array([out_step, ind_crit]))
+                    self.val_losses.append(np.array([out_step, ind_crit])[None])
 
-                    print(f"    Outer Step: {out_step:-5d}      Loss: {loss_epoch_model[0]:-.8f}     ValIndCrit: {ind_crit:-.8f}", flush=True)
+                    print(f"    Outer Step: {out_step:-5d}      Loss: {loss_epoch_model:-.8f}     ValIndCrit: {ind_crit:-.8f}", flush=True)
 
                     ## Check if val loss is lowest to save the model
                     if ind_crit <= jnp.concatenate(self.val_losses)[:, 1].min() and save_path:
@@ -263,10 +260,10 @@ class Trainer:
                     ## Restore the learner at the last evaluation step
                     if out_step == nb_outer_steps_max-1:
                         print(f"        Setting the model to the best one found ...")
-                        self.load_trainer(save_path)
+                        self.restore_trainer(save_path, include_losses=False)
 
                 else:
-                    print(f"    Outer Step: {out_step:-5d}      Loss: {loss_epoch_model[0]:-.8f}", flush=True)
+                    print(f"    Outer Step: {out_step:-5d}      Loss: {loss_epoch_model:-.8f}", flush=True)
 
                 print(f"        -NbInnerStepsModel: {in_step_model+1:4d}\n        -NbInnerStepsCoeffs: {in_step_coeffs+1:4d}\n        -DiffModel: {diff_model:.2e}\n        -DiffCoeffs:  {diff_coeffs:.2e}", flush=True)
 
@@ -295,43 +292,48 @@ class Trainer:
         assert path[-1] == "/", "ERROR: The path must end with /"
         # print(f"\nSaving model and results into {path} folder ...\n")
 
+        if not os.path.exists(path+"artifacts/"):
+            os.makedirs(path+"artifacts/")
+
         eqx.tree_serialise_leaves(path+"model.eqx", self.model)
         eqx.tree_serialise_leaves(path+"coeffs.eqx", self.coeffs)
 
-        pickle.dump(self.opt_model_state, open(path+"opt_state_model.pkl", "wb"))
-        pickle.dump(self.opt_coeffs_state, open(path+"opt_state_coeffs.pkl", "wb"))
+        path_ar = path+"artifacts/"
+        pickle.dump(self.opt_model_state, open(path_ar+"opt_state_model.pkl", "wb"))
+        pickle.dump(self.opt_coeffs_state, open(path_ar+"opt_state_coeffs.pkl", "wb"))
 
-        if not os.path.exists(path+"losses/"):
-            os.makedirs(path+"losses/")
-
-        np.save(path+"losses/train_loss_model.npy", self.losses_model)
-        np.save(path+"losses/train_loss_coeffs.npy", self.losses_coeffs)
-
-        np.save(path+"val_loss_model.npy", np.concatenate(self.val_losses))
+        np.save(path_ar+"train_loss_model.npy", self.losses_model)
+        np.save(path_ar+"train_loss_coeffs.npy", self.losses_coeffs)
+        np.save(path_ar+"val_loss_model.npy", np.concatenate(self.val_losses))
 
 
-    def restore_trainer(self, path):
+    def restore_trainer(self, path, include_losses=True):
         assert path[-1] == "/", "ERROR: Invalidn provided. The path must end with /"
         # print(f"\nLoading model and results from {path} folder ...\n")
 
         self.model = eqx.tree_deserialise_leaves(path+"model.eqx", self.model)
         self.coeffs = eqx.tree_deserialise_leaves(path+"coeffs.eqx", self.coeffs)
 
-        self.opt_state_model = pickle.load(open(path+"opt_state_model.pkl", "rb"))
-        self.opt_state_coeffs = pickle.load(open(path+"opt_state_coeffs.pkl", "rb"))
+        path_ar = path+"artifacts/"
+        self.opt_state_model = pickle.load(open(path_ar+"opt_state_model.pkl", "rb"))
+        self.opt_state_coeffs = pickle.load(open(path_ar+"opt_state_coeffs.pkl", "rb"))
 
-        self.losses_model = np.load(path+"train_loss_model.npy")
-        self.losses_coeffs = np.load(path+"train_loss_coeffs.npy")
-
-        self.val_losses = [np.load(path+"val_loss_model.npy")]
+        if include_losses:
+            self.losses_model = np.load(path_ar+"train_loss_model.npy")
+            self.losses_coeffs = np.load(path_ar+"train_loss_coeffs.npy")
+            self.val_losses = [np.load(path_ar+"val_loss_model.npy")]
 
 
     def save_auxillary_data(self, path, aux_data_model, aux_data_coeffs, step):
         assert path[-1] == "/", "ERROR: The path must end with /"
         # print(f"\nSaving auxillary data into {path} folder ...\n")
 
-        if not os.path.exists(path+"aux/"):
-            os.makedirs(path+"aux/")
+        if not os.path.exists(path+"artifacts/"):
+            os.makedirs(path+"artifacts/")
+        if not os.path.exists(path+"artifacts/aux_model/"):
+            os.makedirs(path+"artifacts/aux_model/")
+        if not os.path.exists(path+"artifacts/aux_coeffs/"):
+            os.makedirs(path+"artifacts/aux_coeffs/")
 
-        pickle.dump(aux_data_model, open(f"{path}aux/opt_state_model_{step}.pkl", "wb"))
-        pickle.dump(aux_data_coeffs, open(f"{path}aux/opt_state_coeffs_{step}.pkl", "wb"))
+        pickle.dump(aux_data_model, open(f"{path}artifacts/aux_model/{step:04d}.pkl", "wb"))
+        pickle.dump(aux_data_coeffs, open(f"{path}artifacts/aux_coeffs/{step:04d}.pkl", "wb"))
