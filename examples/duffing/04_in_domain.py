@@ -44,9 +44,10 @@ import time
 ## Main hps ##
 SEED = 2026
 main_key = jax.random.PRNGKey(SEED)
-train = False
-gen_data = True
-run_folder="runs/240511-151804/"
+
+gen_data = False
+run_folder="runs/240511-235605/" if not gen_data else None
+train = False or gen_data
 
 ## Data generation hps ##
 T_horizon = 20
@@ -68,7 +69,7 @@ fixed_point_steps = 5
 epsilon = 0e1  ## For contrastive loss
 eta_inv, eta_cont, eta_spar = 1e-3, 1e-2, 1e-1
 
-init_lr = 5e-4
+init_lr = 5e-5
 sched_factor = 1.0
 
 power_iter_steps = 5
@@ -76,10 +77,10 @@ spectral_scaling = 1.0 # since the spectral norm is under-estimated wia power it
 
 
 ## (Proximal) Training hps ##
-nb_outer_steps_max=200
+nb_outer_steps_max=1000
 inner_tol_model=1e-9
 inner_tol_coeffs=1e-8
-nb_inner_steps_max=10
+nb_inner_steps_max=20
 proximal_beta=100.
 patience=nb_outer_steps_max
 
@@ -102,11 +103,11 @@ def duffing2(t, state, a, b, c):
     dydt = -x*b/10 - c*x**3 / 5.
     return [dxdt, dydt]
 
-# def duffing3(t, state, a, b, c):
-#     x, y = state
-#     dxdt = y
-#     dydt = -x*b - c*x**3 / 5.
-#     return [dxdt, dydt]
+def duffing3(t, state, a, b, c):
+    x, y = state
+    dxdt = y
+    dydt = - c*x**3 / 5.
+    return [dxdt, dydt]
 
 # Parameters
 a, b, c = -1/2., -1, 1/10.
@@ -134,32 +135,29 @@ init_conds_test = np.array([[-0.5, -1], [-0.5, -0.5], [-0.5, 0.5],
                     [2, -1], [2, -0.5], [2, 0.5], [2, 1],
                     ])
 
-
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 5*2), sharex=True)
-
 if gen_data == True:
 
-    test_data = np.zeros(shape=(2, len(init_conds_test), len(t_eval), 2))
+    systems = (duffing1, duffing2, duffing3)
+    nb_envs = len(systems)
+    fig, axs = plt.subplots(nb_envs, 1, figsize=(10, 5*nb_envs), sharex=True)
+
+    test_data = np.zeros(shape=(nb_envs, len(init_conds_test), len(t_eval), 2))
     for i, state0 in enumerate(init_conds_test):
-        sol1 = solve_ivp(duffing1, t_span, state0, args=(a, b, c), t_eval=t_eval)
-        test_data[0, i] = sol1.y.T
 
-        sol2 = solve_ivp(duffing2, t_span, state0, args=(a, b, c), t_eval=t_eval)
-        test_data[1, i] = sol2.y.T
+        for e, system in enumerate(systems):
+            sol = solve_ivp(system, t_span, state0, args=(a, b, c), t_eval=t_eval)
+            test_data[e, i] = sol.y.T
 
-        ax1 = sbplot(sol1.y[0], sol1.y[1], ".-", color="grey", ax=ax1)
-        ax2 = sbplot(sol2.y[0], sol2.y[1], ".-", color="grey", ax=ax2)
+            axs[e] = sbplot(sol.y[0], sol.y[1], ".-", color="grey", ax=axs[e])
 
-    train_data = np.zeros(shape=(2, len(init_conds_train), len(t_eval), 2))
+    train_data = np.zeros(shape=(nb_envs, len(init_conds_train), len(t_eval), 2))
     for i, state0 in enumerate(init_conds_train):
-        sol1 = solve_ivp(duffing1, t_span, state0, args=(a, b, c), t_eval=t_eval)
-        train_data[0, i] = sol1.y.T
 
-        sol2 = solve_ivp(duffing2, t_span, state0, args=(a, b, c), t_eval=t_eval)
-        train_data[1, i] = sol2.y.T
+        for e, system in enumerate(systems):
+            sol = solve_ivp(system, t_span, state0, args=(a, b, c), t_eval=t_eval)
+            train_data[e, i] = sol.y.T
 
-        ax1 = sbplot(sol1.y[0], sol1.y[1], ".-", ax=ax1)
-        ax2 = sbplot(sol2.y[0], sol2.y[1], ".-", ax=ax2)
+            axs[e] = sbplot(sol.y[0], sol.y[1], ".-", ax=axs[e])
 
 
     ####----------------------------------------------------####
@@ -185,27 +183,25 @@ else:
     train_data, t_eval = np.load(run_folder+"train_data.npz").values()
     test_data, t_eval = np.load(run_folder+"test_data.npz").values()
 
-    print("No training. Loading data from:", run_folder)
+    print("No generation. Loading data from:", run_folder)
+
+    nb_envs = train_data.shape[0]
+    fig, axs = plt.subplots(nb_envs, 1, figsize=(10, 5*nb_envs), sharex=True)
 
     for i in range(test_data.shape[1]):
-        sol1 = test_data[0, i].T
-        sol2 = test_data[1, i].T
-
-        ax1 = sbplot(sol1[0], sol1[1], ".-", color="grey", ax=ax1)
-        ax2 = sbplot(sol2[0], sol2[1], ".-", color="grey", ax=ax2)
+        for e in range(nb_envs):
+            sol = test_data[e, i].T
+            axs[e] = sbplot(sol[0], sol[1], ".-", color="grey", ax=axs[e])
 
     for i in range(train_data.shape[1]):
-        sol1 = train_data[0, i].T
-        sol2 = train_data[1, i].T
+        for e in range(nb_envs):
+            sol = train_data[e, i].T
+            axs[e] = sbplot(sol[0], sol[1], ".-", ax=axs[e])
 
-        ax1 = sbplot(sol1[0], sol1[1], ".-", ax=ax1)
-        ax2 = sbplot(sol2[0], sol2[1], ".-", ax=ax2)
-
-ax2.set_xlabel(r'$x$')
-ax1.set_ylabel(r'$y$')
-ax2.set_ylabel(r'$y$')
-ax1.set_title('Env 1')
-ax2.set_title('Env 2');
+axs[0].set_xlabel(r'$x$')
+for e in range(nb_envs):
+    axs[e].set_ylabel(r'$y$')
+    axs[e].set_title(f'Env {e+1}')
 
 
 #%%
@@ -373,9 +369,10 @@ model_keys = jax.random.split(main_key, num=3)
 
 model = NeuralODE(data_size=2, dict_size=dict_size, mlp_hidden_size=mlp_hidden_size, mlp_depth=mlp_depth, key=model_keys[0])
 
-coeffs1 = Coefficients(data_size=2, dict_size=dict_size, key=model_keys[1])
-coeffs2 = Coefficients(data_size=2, dict_size=dict_size, key=model_keys[2])
-coeffs = (coeffs1, coeffs2)
+coeffs = []
+for e in range(nb_envs):
+    coeffs.append(Coefficients(data_size=2, dict_size=dict_size, key=model_keys[e+i]))
+coeffs = tuple(coeffs)
 
 
 # %%
@@ -479,7 +476,6 @@ sched_model = optax.piecewise_constant_schedule(init_value=init_lr, boundaries_a
 sched_coeffs = optax.piecewise_constant_schedule(init_value=init_lr, boundaries_and_scales=boundaries_and_scales)
 
 opt_model = optax.adam(sched_model)
-# opt_coeffs = (optax.adam(sched_coeffs), optax.adam(sched_coeffs))
 opt_coeffs = optax.adam(sched_coeffs)
 
 
@@ -509,7 +505,7 @@ if train == True:
                             print_every=print_every,
                             save_path=run_folder, 
                             train_dataloader=train_dataloader, 
-                            val_dataloader=train_dataloader, 
+                            val_dataloader=test_dataloader,
                             patience=patience,
                             int_prop=1.0,
                             key=train_key)
@@ -519,7 +515,7 @@ if train == True:
     print("\nTotal gradient descent training time: %d hours %d mins %d secs" %time_in_hmsecs)
 
 else:
-    print("\nNo training, loading model and results from "+ run_folder +" folder ...\n")
+    print("\nNo training, loading model and artifacts from "+ run_folder +" folder ...\n")
 
     trainer.restore_trainer(path=run_folder)
 
@@ -538,10 +534,14 @@ visualtester.test(test_dataloader)
 # visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", key=vis_key)
 # visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", e=0, traj=18)
 
-visualtester.visualize_batch(test_dataloader, e_range=(0,), loss_plot_tol=1e-6, phase_plot_xlim=(-15,15), phase_plot_ylim=(-3,3), save_path=run_folder+"results_batch.png")
+visualtester.visualize_batch(test_dataloader, e_range=(0,), loss_plot_tol=1e-10, loss_plot_lim=1e-3, phase_plot_xlim=(-5,5), phase_plot_ylim=(-3,3), save_path=run_folder+"results_batch.png")
 
 
+# %%
 
+## Copy nohup file to the run folder (if it exists)
+if os.path.exists("nohup.log"):
+    os.system(f"cp nohup.log {run_folder}nohup.log")
 
 
 # %% [markdown]

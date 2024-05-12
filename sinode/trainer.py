@@ -175,7 +175,7 @@ class Trainer:
         for out_step in range(nb_outer_steps_max):
 
             model_old = model
-            coeffs_old = (coeffs[0], coeffs[1])
+            coeffs_old = tuple([coeffs_ for coeffs_ in coeffs])
 
             model_prev = model
             for in_step_model in range(nb_inner_steps_max):
