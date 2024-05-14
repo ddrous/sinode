@@ -226,9 +226,10 @@ class VisualTester:
         losses_coeffs = self.trainer.losses_coeffs
 
         ## Since loss can be negative
-        min_loss = min(np.min(losses_model), np.min(losses_coeffs), 0.)
-        losses_model += abs(min_loss) + loss_plot_tol
-        losses_coeffs += abs(min_loss) + loss_plot_tol
+        if loss_plot_tol:
+            min_loss = min(np.min(losses_model), np.min(losses_coeffs), 0.)
+            losses_model += abs(min_loss) + loss_plot_tol
+            losses_coeffs += abs(min_loss) + loss_plot_tol
 
         mke = np.ceil(losses_model.shape[0]/1000).astype(int)
 

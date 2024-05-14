@@ -13,8 +13,8 @@
 
 #%%
 
-# %load_ext autoreload
-# %autoreload 2
+%load_ext autoreload
+%autoreload 2
 
 import jax
 
@@ -45,8 +45,8 @@ import time
 SEED = 2026
 main_key = jax.random.PRNGKey(SEED)
 
-gen_data = True
-run_folder="runs/240512-201602/" if not gen_data else None
+gen_data = False
+run_folder="runs/240514-200419/" if not gen_data else None
 train = True or gen_data
 
 ## Data generation hps ##
@@ -67,7 +67,7 @@ fixed_point_steps = 5
 
 ## Loss & optimizer hps ##
 epsilon = 0e1  ## For contrastive loss
-eta_inv, eta_cont, eta_spar = 1e-3, 1e-1, 1e-1
+eta_rec, eta_inv, eta_cont, eta_spar = 1e-1, 1e-3, 1e-3, 1e-1
 
 init_lr = 5e-5
 sched_factor = 1.0
@@ -77,7 +77,7 @@ spectral_scaling = 1.0 # since the spectral norm is under-estimated wia power it
 
 
 ## (Proximal) Training hps ##
-nb_outer_steps_max=200
+nb_outer_steps_max=500
 inner_tol_model=1e-9
 inner_tol_coeffs=1e-8
 nb_inner_steps_max=20
@@ -85,7 +85,7 @@ proximal_beta=100.
 patience=nb_outer_steps_max
 
 ## Other hps ##
-print_every = 10
+print_every = 100
 
 
 #%%
@@ -370,11 +370,32 @@ coeffs = tuple(coeffs)
 
 # %%
 
+
+def loss_diff(model, coeffs, batch, key):
+    """ Reconstruction loss """
+    X, t = batch
+    lambdas, gammas = coeffs.lambdas, coeffs.gammas
+    vf = jax.vmap(jax.vmap(model.vector_field, in_axes=(None, 0, None)), in_axes=(None, 0, None))
+
+    h = t[1] - t[0]
+    diffs = (X[:, 1:, :] - X[:, :-1, :]) / h
+    vf_outs = vf(0., X[:, :-1, :], (lambdas, gammas))
+
+    nfes = X.shape[0] * X.shape[1]
+    return jnp.mean((diffs - vf_outs)**2), jnp.array([nfes])
+
+
 def loss_rec(model, coeffs, batch, key):
     """ Reconstruction loss """
     X, t = batch
-    X_hat, nb_fes = model(X[:, 0, :], t, coeffs)
-    return jnp.mean((X-X_hat)**2), nb_fes
+    # X_hat, nb_fes = model(X[:, 0, :], t, coeffs)
+    # return jnp.mean((X-X_hat)**2), nb_fes
+
+    traj = jax.random.permutation(key, X.shape[0])[:1]
+
+    X_hat, nb_fes = model(X[traj, 0, :], t, coeffs)
+    return jnp.mean((X[traj]-X_hat)**2), nb_fes
+
 
 def loss_inv(model, coeffs, batch, key):
     """ Inverse loss - Assures the inverses are playing their roles """
@@ -419,14 +440,16 @@ def loss_fn(model, coeffs, batch, key):
 
     """ The loss considers one model, and also 1 coeffs (not a tuple)! """
 
+    diff_loss, nb_fes = loss_diff(model, coeffs, batch, key)
     rec_loss, nb_fes = loss_rec(model, coeffs, batch, key)
     inv_loss = loss_inv(model, coeffs, batch, key)
     cont_loss = loss_cont(model, coeffs, batch, key)
     spar_loss = loss_sparsity(model, coeffs, batch, key)
 
-    weighted_loss = rec_loss + eta_inv*inv_loss + eta_cont*cont_loss + eta_spar*spar_loss
+    weighted_loss = diff_loss + eta_rec*rec_loss + eta_inv*inv_loss + eta_cont*cont_loss + eta_spar*spar_loss
+    # weighted_loss = diff_loss + eta_inv*inv_loss + eta_cont*cont_loss + eta_spar*spar_loss
 
-    return weighted_loss, (rec_loss, inv_loss, cont_loss, spar_loss, nb_fes)
+    return weighted_loss, (diff_loss, inv_loss, cont_loss, spar_loss, nb_fes)
 
 
 
@@ -498,7 +521,7 @@ if train == True:
                             print_every=print_every,
                             save_path=run_folder, 
                             train_dataloader=train_dataloader, 
-                            val_dataloader=test_dataloader,    ## TODO: use test !
+                            val_dataloader=train_dataloader,    ## TODO: use test !
                             patience=patience,
                             int_prop=1.0,
                             key=train_key)
@@ -527,7 +550,7 @@ visualtester.test(test_dataloader)
 # visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", key=vis_key)
 # visualtester.visualize(test_dataloader, save_path=run_folder+"results.png", e=0, traj=18)
 
-visualtester.visualize_batch(test_dataloader, e_range=(0,), loss_plot_tol=1e-10, loss_plot_lim=1e-3, phase_plot_xlim=(-5,5), phase_plot_ylim=(-3,3), save_path=run_folder+"results_batch.png")
+visualtester.visualize_batch(test_dataloader, e_range=(0,), loss_plot_tol=1e-3, loss_plot_lim=None, phase_plot_xlim=(-5,5), phase_plot_ylim=(-3,3), save_path=run_folder+"results_batch.png")
 
 
 # %%
