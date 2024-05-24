@@ -1,0 +1,580 @@
+Available devices: [cuda(id=0)]
+
+
+=== Beginning training with proximal alternating minimization ... ===
+    Number of examples in a batch: 12
+    Maximum number of steps per inner minimization: 20
+    Maximum number of outer minimizations: 1000
+    Maximum total number of training steps: 20000
+
+Compiling function "train_step" for neural ode ...
+
+Compiling function "train_step" for coeffs ...
+    Outer Step:     0      Loss: 2.64356995     ValIndCrit: 2.64416003
+        Saving best model so far ...
+        -NbInnerStepsModel:    1
+        -NbInnerStepsCoeffs:    1
+        -DiffModel: 1.77e-06
+        -DiffCoeffs:  inf
+    Outer Step:    10      Loss: 1.28470981     ValIndCrit: 1.24194694
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.70e-07
+        -DiffCoeffs:  2.04e-05
+    Outer Step:    20      Loss: 0.96400255     ValIndCrit: 0.89236975
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.00e-07
+        -DiffCoeffs:  1.05e-05
+    Outer Step:    30      Loss: 0.45609167     ValIndCrit: 0.36614358
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.00e-07
+        -DiffCoeffs:  4.17e-06
+    Outer Step:    40      Loss: 0.20240742     ValIndCrit: 0.14247285
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 3.05e-08
+        -DiffCoeffs:  1.11e-06
+    Outer Step:    50      Loss: 0.15789780     ValIndCrit: 0.10776389
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.07e-08
+        -DiffCoeffs:  5.86e-07
+    Outer Step:    60      Loss: 0.13050832     ValIndCrit: 0.09033628
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 3.82e-08
+        -DiffCoeffs:  3.31e-07
+    Outer Step:    70      Loss: 0.12159704     ValIndCrit: 0.08157609
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.93e-08
+        -DiffCoeffs:  2.60e-07
+    Outer Step:    80      Loss: 0.11007595     ValIndCrit: 0.07606572
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.49e-07
+        -DiffCoeffs:  1.69e-07
+    Outer Step:    90      Loss: 0.09791380     ValIndCrit: 0.07058214
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.92e-08
+        -DiffCoeffs:  1.23e-07
+    Outer Step:   100      Loss: 0.09029022     ValIndCrit: 1.21464610
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.46e-08
+        -DiffCoeffs:  1.63e-07
+    Outer Step:   110      Loss: 0.08661529     ValIndCrit: 0.06531192
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 6.65e-09
+        -DiffCoeffs:  1.39e-07
+    Outer Step:   120      Loss: 0.08091914     ValIndCrit: 0.06057227
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 5.58e-09
+        -DiffCoeffs:  1.46e-07
+    Outer Step:   130      Loss: 0.07361779     ValIndCrit: 0.05563281
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.01e-08
+        -DiffCoeffs:  1.58e-07
+    Outer Step:   140      Loss: 0.06383945     ValIndCrit: 0.04948172
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.42e-08
+        -DiffCoeffs:  2.23e-07
+    Outer Step:   150      Loss: 0.05393923     ValIndCrit: 0.04100557
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.96e-08
+        -DiffCoeffs:  3.82e-07
+    Outer Step:   160      Loss: 0.04483603     ValIndCrit: 0.02764737
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.09e-07
+        -DiffCoeffs:  7.91e-07
+    Outer Step:   170      Loss: 0.02460065     ValIndCrit: 0.01130926
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 3.84e-08
+        -DiffCoeffs:  2.91e-07
+    Outer Step:   180      Loss: 0.01963532     ValIndCrit: 0.00691891
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 3.17e-08
+        -DiffCoeffs:  7.37e-08
+    Outer Step:   190      Loss: 0.01385810     ValIndCrit: 0.00514629
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.59e-08
+        -DiffCoeffs:  2.49e-08
+    Outer Step:   200      Loss: 0.01199125     ValIndCrit: 0.29430228
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.29e-08
+        -DiffCoeffs:  1.79e-08
+    Outer Step:   210      Loss: 0.00922887     ValIndCrit: 0.00396029
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.66e-09
+        -DiffCoeffs:  2.17e-08
+    Outer Step:   220      Loss: 0.00597823     ValIndCrit: 0.00317086
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.41e-08
+        -DiffCoeffs:  1.62e-08
+    Outer Step:   230      Loss: 0.00724256     ValIndCrit: 0.00317875
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 5.60e-09
+        -DiffCoeffs:  1.98e-08
+    Outer Step:   240      Loss: 0.00948241     ValIndCrit: 0.00231173
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.30e-08
+        -DiffCoeffs:  2.63e-08
+    Outer Step:   250      Loss: 0.00576942     ValIndCrit: 0.00214716
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.39e-08
+        -DiffCoeffs:  7.09e-08
+    Outer Step:   260      Loss: 0.00559655     ValIndCrit: 0.00188765
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.48e-09
+        -DiffCoeffs:  1.62e-08
+    Outer Step:   270      Loss: 0.00534347     ValIndCrit: 0.00188708
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.48e-09
+        -DiffCoeffs:  2.40e-08
+    Outer Step:   280      Loss: 0.00437758     ValIndCrit: 0.00150819
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.59e-09
+        -DiffCoeffs:  2.77e-08
+    Outer Step:   290      Loss: 0.00412002     ValIndCrit: 0.00139603
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.58e-08
+        -DiffCoeffs:  4.30e-08
+    Outer Step:   300      Loss: 0.00169669     ValIndCrit: 0.19282854
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.81e-08
+        -DiffCoeffs:  6.04e-08
+    Outer Step:   310      Loss: 0.00372506     ValIndCrit: 0.00155305
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 3.50e-09
+        -DiffCoeffs:  1.34e-08
+    Outer Step:   320      Loss: 0.00368187     ValIndCrit: 0.00133797
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.53e-09
+        -DiffCoeffs:  1.53e-08
+    Outer Step:   330      Loss: 0.00277230     ValIndCrit: 0.00143559
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.88e-09
+        -DiffCoeffs:  2.12e-08
+    Outer Step:   340      Loss: 0.00275610     ValIndCrit: 0.00133452
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.00e-08
+        -DiffCoeffs:  5.39e-08
+    Outer Step:   350      Loss: 0.00302511     ValIndCrit: 0.00106200
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.53e-09
+        -DiffCoeffs:  1.08e-08
+    Outer Step:   360      Loss: -0.00024809     ValIndCrit: 0.00114396
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.43e-08
+        -DiffCoeffs:  3.36e-08
+    Outer Step:   370      Loss: -0.00406099     ValIndCrit: 0.00109846
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.50e-09
+        -DiffCoeffs:  3.68e-08
+    Outer Step:   380      Loss: -0.00470035     ValIndCrit: 0.00098843
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.69e-08
+        -DiffCoeffs:  5.05e-08
+    Outer Step:   390      Loss: -0.00117098     ValIndCrit: 0.00089225
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.11e-08
+        -DiffCoeffs:  3.58e-08
+    Outer Step:   400      Loss: -0.00214648     ValIndCrit: 0.15367875
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.94e-08
+        -DiffCoeffs:  1.06e-07
+    Outer Step:   410      Loss: -0.00099576     ValIndCrit: 0.00100271
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.03e-09
+        -DiffCoeffs:  3.95e-08
+    Outer Step:   420      Loss: -0.00598903     ValIndCrit: 0.00097214
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.70e-09
+        -DiffCoeffs:  2.52e-08
+    Outer Step:   430      Loss: 0.00163255     ValIndCrit: 0.00090161
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 6.73e-09
+        -DiffCoeffs:  2.77e-08
+    Outer Step:   440      Loss: -0.00054655     ValIndCrit: 0.00094716
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.43e-08
+        -DiffCoeffs:  3.12e-08
+    Outer Step:   450      Loss: -0.00436568     ValIndCrit: 0.00087071
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.14e-08
+        -DiffCoeffs:  2.58e-08
+    Outer Step:   460      Loss: -0.00327402     ValIndCrit: 0.00073555
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 5.42e-09
+        -DiffCoeffs:  4.33e-08
+    Outer Step:   470      Loss: 0.00025021     ValIndCrit: 0.00088465
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.14e-08
+        -DiffCoeffs:  6.94e-08
+    Outer Step:   480      Loss: -0.00528193     ValIndCrit: 0.00086186
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.27e-08
+        -DiffCoeffs:  1.48e-08
+    Outer Step:   490      Loss: 0.00062881     ValIndCrit: 0.00085345
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.61e-08
+        -DiffCoeffs:  3.00e-08
+    Outer Step:   500      Loss: -0.00152935     ValIndCrit: 0.09900495
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.16e-09
+        -DiffCoeffs:  2.98e-08
+    Outer Step:   510      Loss: -0.00391236     ValIndCrit: 0.00094254
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.19e-08
+        -DiffCoeffs:  8.10e-08
+    Outer Step:   520      Loss: -0.00095605     ValIndCrit: 0.00081815
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.61e-09
+        -DiffCoeffs:  2.37e-08
+    Outer Step:   530      Loss: -0.00136058     ValIndCrit: 0.00073872
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.57e-09
+        -DiffCoeffs:  2.78e-08
+    Outer Step:   540      Loss: 0.00100309     ValIndCrit: 0.00076076
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.01e-08
+        -DiffCoeffs:  3.77e-08
+    Outer Step:   550      Loss: -0.01525427     ValIndCrit: 0.00068557
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 8.17e-09
+        -DiffCoeffs:  2.16e-08
+    Outer Step:   560      Loss: 0.00080669     ValIndCrit: 0.00067761
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.34e-09
+        -DiffCoeffs:  5.83e-08
+    Outer Step:   570      Loss: -0.00751283     ValIndCrit: 0.00065467
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 6.02e-09
+        -DiffCoeffs:  2.68e-08
+    Outer Step:   580      Loss: -0.00539519     ValIndCrit: 0.00070883
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.73e-08
+        -DiffCoeffs:  6.85e-08
+    Outer Step:   590      Loss: -0.00013916     ValIndCrit: 0.00065424
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.46e-08
+        -DiffCoeffs:  1.45e-07
+    Outer Step:   600      Loss: -0.00087700     ValIndCrit: 0.03662938
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.32e-08
+        -DiffCoeffs:  1.91e-08
+    Outer Step:   610      Loss: -0.00664964     ValIndCrit: 0.00068551
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.14e-08
+        -DiffCoeffs:  5.00e-08
+    Outer Step:   620      Loss: -0.00023996     ValIndCrit: 0.00075907
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 9.77e-09
+        -DiffCoeffs:  6.74e-08
+    Outer Step:   630      Loss: 0.00008087     ValIndCrit: 0.00064738
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 6.35e-09
+        -DiffCoeffs:  4.81e-08
+    Outer Step:   640      Loss: 0.00060076     ValIndCrit: 0.00066245
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.23e-08
+        -DiffCoeffs:  1.05e-07
+    Outer Step:   650      Loss: -0.00034588     ValIndCrit: 0.00050028
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.19e-09
+        -DiffCoeffs:  9.18e-08
+    Outer Step:   660      Loss: -0.00767496     ValIndCrit: 0.00058889
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.32e-08
+        -DiffCoeffs:  4.23e-08
+    Outer Step:   670      Loss: -0.00005796     ValIndCrit: 0.00051140
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 9.42e-09
+        -DiffCoeffs:  6.72e-08
+    Outer Step:   680      Loss: -0.00017762     ValIndCrit: 0.00052554
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.12e-08
+        -DiffCoeffs:  3.49e-08
+    Outer Step:   690      Loss: -0.00265876     ValIndCrit: 0.00046106
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.78e-09
+        -DiffCoeffs:  5.44e-08
+    Outer Step:   700      Loss: -0.00999255     ValIndCrit: 0.03203562
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 6.20e-09
+        -DiffCoeffs:  3.34e-08
+    Outer Step:   710      Loss: 0.00018431     ValIndCrit: 0.00051183
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.86e-08
+        -DiffCoeffs:  8.05e-08
+    Outer Step:   720      Loss: -0.00787346     ValIndCrit: 0.00049591
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.91e-09
+        -DiffCoeffs:  2.78e-08
+    Outer Step:   730      Loss: -0.00175936     ValIndCrit: 0.00055907
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 3.97e-09
+        -DiffCoeffs:  5.17e-08
+    Outer Step:   740      Loss: -0.00414599     ValIndCrit: 0.00045509
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.76e-09
+        -DiffCoeffs:  3.65e-08
+    Outer Step:   750      Loss: -0.01060285     ValIndCrit: 0.00050131
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.34e-08
+        -DiffCoeffs:  4.03e-08
+    Outer Step:   760      Loss: -0.01595724     ValIndCrit: 0.00058530
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.89e-08
+        -DiffCoeffs:  2.27e-08
+    Outer Step:   770      Loss: -0.01664498     ValIndCrit: 0.00045721
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.07e-08
+        -DiffCoeffs:  5.91e-08
+    Outer Step:   780      Loss: -0.00195376     ValIndCrit: 0.00064443
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.12e-08
+        -DiffCoeffs:  6.21e-08
+    Outer Step:   790      Loss: -0.00022654     ValIndCrit: 0.00047838
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.29e-08
+        -DiffCoeffs:  5.10e-08
+    Outer Step:   800      Loss: -0.01857437     ValIndCrit: 0.02599696
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.62e-08
+        -DiffCoeffs:  8.72e-08
+    Outer Step:   810      Loss: -0.01692208     ValIndCrit: 0.00053117
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.40e-08
+        -DiffCoeffs:  1.72e-08
+    Outer Step:   820      Loss: -0.01331086     ValIndCrit: 0.00053798
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.59e-08
+        -DiffCoeffs:  5.35e-08
+    Outer Step:   830      Loss: -0.03062413     ValIndCrit: 0.00044674
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 9.31e-09
+        -DiffCoeffs:  7.33e-08
+    Outer Step:   840      Loss: -0.02155852     ValIndCrit: 0.00050721
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.93e-08
+        -DiffCoeffs:  1.34e-07
+    Outer Step:   850      Loss: -0.00137684     ValIndCrit: 0.00043399
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.76e-09
+        -DiffCoeffs:  1.99e-08
+    Outer Step:   860      Loss: -0.00095668     ValIndCrit: 0.00051088
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.62e-09
+        -DiffCoeffs:  5.67e-08
+    Outer Step:   870      Loss: -0.01539844     ValIndCrit: 0.00051431
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.53e-08
+        -DiffCoeffs:  9.23e-08
+    Outer Step:   880      Loss: -0.00020941     ValIndCrit: 0.00040278
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 9.44e-09
+        -DiffCoeffs:  7.27e-08
+    Outer Step:   890      Loss: -0.00350104     ValIndCrit: 0.00038349
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.69e-08
+        -DiffCoeffs:  1.87e-07
+    Outer Step:   900      Loss: -0.02056196     ValIndCrit: 0.05116471
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.94e-08
+        -DiffCoeffs:  4.51e-07
+    Outer Step:   910      Loss: -0.00394651     ValIndCrit: 0.00038280
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 5.56e-09
+        -DiffCoeffs:  4.72e-08
+    Outer Step:   920      Loss: -0.00101978     ValIndCrit: 0.00033894
+        Saving best model so far ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 9.62e-09
+        -DiffCoeffs:  2.80e-08
+    Outer Step:   930      Loss: -0.01717944     ValIndCrit: 0.00039249
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.23e-09
+        -DiffCoeffs:  5.46e-08
+    Outer Step:   940      Loss: -0.02739784     ValIndCrit: 0.00051813
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.93e-09
+        -DiffCoeffs:  7.77e-08
+    Outer Step:   950      Loss: -0.01896133     ValIndCrit: 0.00051101
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 7.30e-09
+        -DiffCoeffs:  8.52e-08
+    Outer Step:   960      Loss: -0.00429590     ValIndCrit: 0.00035168
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 4.89e-09
+        -DiffCoeffs:  1.43e-07
+    Outer Step:   970      Loss: -0.01160202     ValIndCrit: 0.00042191
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 2.75e-08
+        -DiffCoeffs:  9.44e-08
+    Outer Step:   980      Loss: -0.00291065     ValIndCrit: 0.00039386
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.93e-08
+        -DiffCoeffs:  2.88e-07
+    Outer Step:   990      Loss: -0.00410909     ValIndCrit: 0.00037489
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.07e-08
+        -DiffCoeffs:  5.46e-08
+    Outer Step:   999      Loss: -0.02794909     ValIndCrit: 0.00039654
+        Setting the model to the best one found ...
+        -NbInnerStepsModel:   20
+        -NbInnerStepsCoeffs:   20
+        -DiffModel: 1.83e-08
+        -DiffCoeffs:  2.98e-07
+
+Training time: 19 hours 47 mins 13 secs
+
+Total gradient descent training time: 19 hours 47 mins 13 secs
+==  Begining in-domain testing ... ==
+    Number of training environments: 4
+    Length of the testing trajectories: 40
+Test Score (In-Domain): 3.5818307
+
+==  Begining out-of-distribution bulk visualisation ... ==
+    Visualized dimensions: (0, 1)
+    Final length of the training trajectories: 40
+    Length of the testing trajectories: 40
+Visualization finished. Figure saved in: ./runs/240513-011227/results_batch.png

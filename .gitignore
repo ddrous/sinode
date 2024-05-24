@@ -1,1 +1,3 @@
 examples/duffing/runs/*
+
+!examples/duffing/runs/00_NearGeneralisation
