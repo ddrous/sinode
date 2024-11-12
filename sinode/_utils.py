@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_theme(context="notebook", style="ticks",
         font='sans-serif', font_scale=1, color_codes=True, rc={"lines.linewidth": 2})
-plt.style.use("dark_background")
+# plt.style.use("dark_background")
+# Set the following parameters for scientfic plots
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['mathtext.fontset'] = 'dejavuserif'
+
 
 import equinox as eqx
 
