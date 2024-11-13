@@ -50,11 +50,11 @@ mlp_depth = 3
 init_lr = 5e-3
 
 ## Training hps
-print_every = 500
-nb_epochs = 5000
+print_every = 100*2
+nb_epochs = 10000*2
 
 ## Data generation hps
-T_horizon = 20
+T_horizon = 5
 skip = 50
 
 #%%
@@ -72,9 +72,10 @@ a, b, c = -1/2., -1, 1/10.
 t_span = (0, T_horizon)
 t_eval = np.arange(t_span[0], t_span[1], 0.01)[::skip]
 
-init_conds = np.array([[-0.5, -1], [-0.5, -0.5], [-0.5, 0.5], 
+init_conds = np.array([
+                       [-0.5, -1], [-0.5, -0.5], [-0.5, 0.5], 
                        [-1.5, 1], 
-                    #    [-0.5, 1], 
+                       [-0.5, 1], 
                        [-1, -1], [-1, -0.5], [-1, 0.5], [-1, 1], 
                        [-2, -1], [-2, -0.5], [-2, 0.5], [-2, 1],
                     #    [0.5, -1], [0.5, -0.5], [0.5, 0.5], [0.5, 1],
@@ -83,11 +84,10 @@ init_conds = np.array([[-0.5, -1], [-0.5, -0.5], [-0.5, 0.5],
                        ])
 
 
-add_init_conds_x = np.random.uniform(-4, -0.5, 50)
-add_init_conds_y = np.random.uniform(-1.5, 0.75, 50)
-add_init_conds = np.stack([add_init_conds_x, add_init_conds_y], axis=-1)
-
-init_conds = np.concatenate([init_conds, add_init_conds], axis=0)
+# add_init_conds_x = np.random.uniform(-4, -0.5, 50)
+# add_init_conds_y = np.random.uniform(-1.5, 0.75, 50)
+# add_init_conds = np.stack([add_init_conds_x, add_init_conds_y], axis=-1)
+# init_conds = np.concatenate([init_conds, add_init_conds], axis=0)
 
 fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 train_data = []
@@ -283,16 +283,16 @@ plt.legend()
 
 plt.draw();
 
-plt.savefig(f"data/loss.png", dpi=300, bbox_inches='tight')
+plt.savefig(f"data/loss_07_1.png", dpi=300, bbox_inches='tight')
 
 
 
 #%% 
 
-eqx.tree_serialise_leaves("data/sinode_model_07.eqx", model)
+eqx.tree_serialise_leaves("data/sinode_model_07_1.eqx", model)
 
 # %%
-# model = eqx.tree_deserialise_leaves("data/sinode_model_07.eqx", model)
+# model = eqx.tree_deserialise_leaves("data/sinode_model_07_1.eqx", model)
 
 ## %%
 
@@ -346,7 +346,7 @@ plt.draw();
 
 
 
-plt.savefig(f"data/test_traj_7.png", dpi=300, bbox_inches='tight')
+plt.savefig(f"data/test_traj_07_1.png", dpi=300, bbox_inches='tight')
 
 
 
